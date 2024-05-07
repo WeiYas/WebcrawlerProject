@@ -11,7 +11,6 @@ st.write("Wähle links einen oder mehrere Shops aus um deren Anzahl an Produkten
 checkEdeka = st.sidebar.checkbox("Edeka")
 checkVekoop = st.sidebar.checkbox("Vekoop")
 
-
 @st.cache_resource
 def init_connection():
     connection_string = st.secrets["mongo"]["connection_string"]
@@ -22,14 +21,16 @@ client = init_connection()
 @st.cache_data(ttl=600)
 def get_data_Edeka():
     db = client.mydb
-    items = db.mycollection.find({"shop_url":"https://www.edeka24.de/"})
+    items = db.mycollection.find({"shop_url":"https://www.edeka24.de/"},{"_id":1})
     items = list(items)
     return items
+
+#nur ID abfragen evt
 
 @st.cache_data(ttl=600)
 def get_data_Vekoop():
     db = client.mydb
-    items = db.mycollection.find({"shop_url":"https://www.vekoop.de/"})
+    items = db.mycollection.find({"shop_url":"https://www.vekoop.de/"},{"_id":1})
     items = list(items)
     return items
 
