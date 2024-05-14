@@ -7,7 +7,7 @@ import numpy as np
 import altair as alt
 import array
 
-onOverall = st.sidebar.toggle("Zeige Diagramm von Produkten mit gtin",value=True)
+onOverall = st.sidebar.toggle("Zeige Übereinstimmungen von gleichen Produkten in mehreren Shops",value=True)
 
 @st.cache_resource
 def init_connection():
@@ -31,34 +31,44 @@ def get_data_gtin():
     items = list(items)
     return items
 
-if len(options) == 2:
-    items = get_data_gtin()
-    arrE = []
-    arrV = []
+items = get_data_gtin()
 
-    for i in items :
-        if i["shop_url"] == "https://www.edeka24.de/" and options[0] == "Edeka":
-            arrE.append(i["product_data"]["gtin"])
-    for i in items :
-        if i["shop_url"] == "https://www.vekoop.de/" and options[1] == "Vekoop":
-            arrV.append(i["product_data"]["gtin"])
+# mehr als 2 shops
 
-    #all = []
-    #all = arrE + arrV
-    #all.sort()
+if len(options) >= 2 :
+    numShop = len(options)
+    urls = ["https://www.edeka24.de/","https://www.vekoop.de/"]
 
+    arr0 = []
+    arr1 = []
+    arr2 = []
+    arr3 = []
+    arr4 = []
+    arr5 = []
+    arr6 = []
 
-    arrSameGEd = []
-    arrSameGVe = []
+    arrSame0 = []
+    arrSame1 = []
 
+    for i in range(numShop) : 
+        for item in items :
+            if i == 0 :
+                if item["shop_url"] == urls[i] and options[i] == "Edeka":
+                  arr0.append(item["product_data"]["gtin"])
+                if item["shop_url"] == urls[i] and options[i] == "Vekoop":
+                  arr0.append(item["product_data"]["gtin"])
+            if i == 1 :
+                if item["shop_url"] == urls[i] and options[i] == "Edeka":
+                  arr1.append(item["product_data"]["gtin"])
+                if item["shop_url"] == urls[i] and options[i] == "Vekoop":
+                  arr1.append(item["product_data"]["gtin"])
 
-    for a in range(len(arrE)):
-        for b in range(len(arrV)) :
-            if arrE[a] == arrV[b] :
-                arrSameGEd.append(arrE[a])
-                arrSameGVe.append(arrV[b])
-
-    #st.write(arrSameG)
+    if len(options) == 2 :
+        for a in range(len(arr0)):
+            for b in range(len(arr1)) :
+                if arr0[a] == arr1[b] :
+                    arrSame0.append(arr0[a])
+                    arrSame1.append(arr1[b])
 
     st.subheader("Diese Produkte gibt es in beiden Geschäften")
 
@@ -71,19 +81,17 @@ if len(options) == 2:
         if first :
             st.subheader(options[0], ":")
             for item in items :
-                for i in range(len(arrSameGEd)) :
-                    if item["shop_url"] == "https://www.edeka24.de/" and item["product_data"]["gtin"] == arrSameGEd[i] :
+                for i in range(len(arrSame0)) :
+                    if item["shop_url"] == urls[0] and item["product_data"]["gtin"] == arrSame0[i] :
                         st.write("- ", item["product_data"]["name"])
 
     with col2:
         if second:
             st.subheader(options[1], ":")
             for item in items :
-                for i in range(len(arrSameGVe)) :
-                    if item["shop_url"] == "https://www.vekoop.de/" and item["product_data"]["gtin"] == arrSameGVe[i] :
+                for i in range(len(arrSame1)) :
+                    if item["shop_url"] == urls[1] and item["product_data"]["gtin"] == arrSame1[i] :
                         st.write("- ", item["product_data"]["name"])
 
-
-# mehr als 2 shops
 
 
