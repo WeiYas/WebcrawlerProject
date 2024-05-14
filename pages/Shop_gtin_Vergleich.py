@@ -20,7 +20,7 @@ client = init_connection()
 
 options = st.multiselect(
     "Wähle Geschäfte und zeige welche Produkte in diesen gleichzeitig zur Verfügung stehen",
-    ["Edeka", "Vekoop"])
+    ["Edeka", "Vekoop","Globus"])
 st.write("Nur Produkte mit registriertem gtin können angezeigt werden")
 st.write(len(options))
 

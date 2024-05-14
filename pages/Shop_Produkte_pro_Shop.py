@@ -64,7 +64,7 @@ if onOne:
          chart_data = pd.DataFrame({'name': ["Edeka"],'number of products':[countE]})
          chart_data = chart_data.set_index('name')
          st.bar_chart(chart_data)
-         st.write(count , ' Produkte im ',choice,' Onlineshop')
+         st.write(countE , ' Produkte im ',choice,' Onlineshop')
 
    #iterations if Vekoop checked
    if checkVekoop == True:
@@ -73,7 +73,7 @@ if onOne:
          chart_data = pd.DataFrame({'name': ["Vekoop"],'number of products':[countV]})
          chart_data = chart_data.set_index('name')
          st.bar_chart(chart_data)
-         st.write(count , ' Produkte im ',choice,' Onlineshop')
+         st.write(countV , ' Produkte im ',choice,' Onlineshop')
 
    
 
