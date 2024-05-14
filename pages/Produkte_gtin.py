@@ -4,9 +4,9 @@ import pandas as pd
 import time
 import matplotlib.pyplot as plt
 import numpy as np
+import altair as alt
 
-
-onOverall = st.sidebar.toggle("Zeige Diagramm von Produkten mit gtin")
+onOverall = st.sidebar.toggle("Zeige Diagramm von Produkten mit gtin",value=True)
 
 @st.cache_resource
 def init_connection():
@@ -48,20 +48,24 @@ countNogtin = count - countGtin
 # st.write(countGtin)
 
 chart_data = pd.DataFrame({
-  'name': ["ja","nein"],
-  'number of products':[countGtin,countNogtin]
+  'Gtin vorhanden': ["ja","nein"],
+  'Anzahl Produkte':[countGtin,countNogtin]
 })
 
 
 
 # ANZEIGE AUF BROWSER
 
-st.title("Ausgefüllte Attribute")
+st.title("Produkte mit Gtin")
 st.write(" ")
 
 if onOverall :
     st.subheader("Wieviele Produkte besitzen einen gtin?")
     st.write("Anzahl von Produkten mit gtin: ", countGtin)
     st.write("Anzahl von Produkten ohne gtin" , countNogtin)
-    chart_data = chart_data.set_index('name')
-    st.bar_chart(chart_data)
+    #chart_data = chart_data.set_index('Gtin vorhanden')
+    #st.bar_chart(chart_data)
+    c = ( 
+    alt.Chart(chart_data).mark_bar().encode(x='Gtin vorhanden',y='Anzahl Produkte')
+    )
+    st.altair_chart(c, use_container_width=True)

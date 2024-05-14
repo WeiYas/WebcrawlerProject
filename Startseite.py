@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 st.set_page_config(
-    page_title="Hello",
-    page_icon="👋",
+    page_title="Startseite",
+    page_icon="random",
 )
 
 col1, col2 = st.columns(2)
@@ -15,7 +15,7 @@ col1, col2 = st.columns(2)
 with col1:
     st.title("Willkommen zum Webcrawler Dashboard")
 with col2:
-    st.image('LogoUCB.jpg',width = 300)
+    st.image('logo_ucb.png',width = 500)
 
 st.markdown(
     """

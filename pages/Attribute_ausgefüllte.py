@@ -8,7 +8,8 @@ import altair as alt
 
 st.title("Verteilung Attribute ausgefüllt")
 st.write(" ")
-onProduktverteilungGtin = st.sidebar.toggle("Ausgefüllte Attribute Anzeige")
+onProduktverteilungGtin = st.sidebar.toggle("Ausgefüllte Attribute Anzeige",value=True)
+
 
 @st.cache_resource
 def init_connection():
