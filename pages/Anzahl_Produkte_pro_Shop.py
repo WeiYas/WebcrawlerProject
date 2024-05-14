@@ -8,6 +8,8 @@ import numpy as np
 st.title("Anzahl Produkte pro Shop")
 st.write("Wähle links einen oder mehrere Shops aus um deren Anzahl an Produkten anzuzeigen")
 
+col1, col2 = st.columns(2)
+
 checkEdeka = st.sidebar.checkbox("Edeka")
 checkVekoop = st.sidebar.checkbox("Vekoop")
 
@@ -41,32 +43,38 @@ choice = " keinem "
 
 #iterations if Edeka checked
 if checkEdeka == True:
-   itemsEdeka = get_data_Edeka()
-   for i in itemsEdeka:
-      countE += 1
-   count = countE
-   choice = "Edeka"
+   with col1:
+      itemsEdeka = get_data_Edeka()
+      for i in itemsEdeka:
+         countE += 1
+      count = countE
+      choice = "Edeka"
+      chart_data = pd.DataFrame({'name': ["Edeka"],'number of products':[countE]})
+      st.bar_chart(chart_data)
 
 #iterations if Vekoop checked
 if checkVekoop == True:
-   itemsVekoop = get_data_Vekoop()
-   for i in itemsVekoop:
-      countV += 1
-   count = countV
-   choice = "Vekoop"
+   with col2:
+      itemsVekoop = get_data_Vekoop()
+      for i in itemsVekoop:
+         countV += 1
+      count = countV
+      choice = "Vekoop"
+      chart_data = pd.DataFrame({'name': ["Vekoop"],'number of products':[countV]})
+      st.bar_chart(chart_data)
+   
 
 if (checkEdeka == True and checkVekoop == True):
    count = countV + countE
    choice = "Edeka + Vekoop"
-   
+   chart_data = pd.DataFrame({
+  'name': ["Edeka","Vekoop"],
+  'number of products':[countE,countV]
+   })
+
+   chart_data = chart_data.set_index('name')
+   st.bar_chart(chart_data)
 
 st.write(count , ' Produkte im ',choice,' Onlineshop')
 
 
-chart_data = pd.DataFrame({
-  'name': ["Edeka","Vekoop"],
-  'number of products':[countE,countV]
-})
-
-chart_data = chart_data.set_index('name')
-st.bar_chart(chart_data)

@@ -4,7 +4,7 @@ import pandas as pd
 import time
 import matplotlib.pyplot as plt
 import numpy as np
-import plotly.express as px
+import altair as alt
 
 st.title("Verteilung Attribute ausgefüllt")
 st.write(" ")
@@ -62,7 +62,11 @@ for items in item:
         count10 +=1
 
 if onProduktverteilungGtin :
-    chart_data = pd.DataFrame({'name': ["0.0 - 0.1","0.1 - 0.2", "0.2 - 0.3","0.3 - 0.4", "0.4 - 0.5", "0.5 - 0.6", "0.6 - 0.7", "0.7 - 0.8" , "0.8 - 0.9" , "0.9 - 1.0"], 'number of products':[count1,count2,count3,count4,count5,count6,count7,count8,count9,count10]})
-    chart_data = chart_data.set_index('name')
-    st.bar_chart(chart_data)
-    fig = px.bar
+    chart_data = pd.DataFrame({'Vollständigkeitswert': ["0.0 - 0.1","0.1 - 0.2", "0.2 - 0.3","0.3 - 0.4", "0.4 - 0.5", "0.5 - 0.6", "0.6 - 0.7", "0.7 - 0.8" , "0.8 - 0.9" , "0.9 - 1.0"], 'Anzahl Produkte':[count1,count2,count3,count4,count5,count6,count7,count8,count9,count10]})
+    #chart_data = chart_data.set_index('completeness-value')
+    # st.bar_chart(chart_data)
+    c = ( 
+    alt.Chart(chart_data).mark_bar().encode(x='Vollständigkeitswert',y='Anzahl Produkte')
+    )
+    st.altair_chart(c, use_container_width=True)
+

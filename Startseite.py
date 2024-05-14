@@ -10,7 +10,12 @@ st.set_page_config(
     page_icon="👋",
 )
 
-st.title("Willkommen zum Webcrawler Dashboard")
+col1, col2 = st.columns(2)
+
+with col1:
+    st.title("Willkommen zum Webcrawler Dashboard")
+with col2:
+    st.image('LogoUCB.jpg',width = 300)
 
 st.markdown(
     """
