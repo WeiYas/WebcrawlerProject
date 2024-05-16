@@ -138,10 +138,9 @@ if onAttribute:
 
     if diaOn : 
         chart_data = pd.DataFrame({
-        'Nährwerte': ["Kalorien","Carbonhydrate", "Fette" , "Fiber", "Proteine"],
-        'Anzahl Produkte':[countCal,countCarb,countfat,countfib,countprot]
-        })
+            'Nährwerte': ["Kalorien","Carbonhydrate", "Fette" , "Fiber", "Proteine"],
+            'Anzahl Produkte':[countCal,countCarb,countfat,countfib,countprot]            })
         c = ( 
             alt.Chart(chart_data).mark_bar().encode(x='Nährwerte',y='Anzahl Produkte')
-            )
+        )
         st.altair_chart(c, use_container_width=True)

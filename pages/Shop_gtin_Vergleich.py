@@ -36,6 +36,9 @@ items = get_data_gtin()
 # mehr als 2 shops
 
 if len(options) >= 2 :
+    with st.spinner('Daten werden geladen...'):
+        time.sleep(50)
+
     numShop = len(options)
     urls = ["https://www.edeka24.de/","https://www.vekoop.de/"]
 
