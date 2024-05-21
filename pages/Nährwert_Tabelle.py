@@ -8,6 +8,7 @@ import altair as alt
 
 onOverall = st.sidebar.toggle("Nährwert Vorhanden",value=True)
 onAttribute = st.sidebar.toggle("Attribute ausgefüllt")
+onSingle = st.sidebar.toggle("Nährwerte pro Produkt")
 
 @st.cache_resource
 def init_connection():
@@ -62,7 +63,7 @@ if onOverall:
 
 if onAttribute:
     
-    st.title("Nährwerte pro Produkte")
+    st.title("Durchschnittliche Nährwerte aller Produkte")
 
     @st.cache_data(ttl=600)
     def get_data_cal():
@@ -144,3 +145,136 @@ if onAttribute:
             alt.Chart(chart_data).mark_bar().encode(x='Nährwerte',y='Anzahl Produkte')
         )
         st.altair_chart(c, use_container_width=True)
+
+if onSingle :
+    st.title("Nährwerte eines ausgewählten Produkt")
+
+    @st.cache_data(ttl=600)
+    def get_data():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table":{"$exists":"true"}},{"_id": 0,  "shop_url" : 1 , "product_data" :{ "name" : 1} })
+        items = list(items)
+        return items
+    
+    allItems = get_data()
+
+    @st.cache_data(ttl=600)
+    def get_data_cal():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table.calories":{"$exists":"true"}},{"_id": 0, "product_data" :{ "nutrition_table" : 1, "name" : 1} })
+        items = list(items)
+        return items
+
+    calItem = get_data_cal()
+
+    @st.cache_data(ttl=600)
+    def get_data_carbo():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table.carbohydrate_content":{"$exists":"true"}},{"_id": 0, "product_data" :{ "nutrition_table" : 1 , "name" : 1} })
+        items = list(items)
+        return items
+
+    carbItem = get_data_carbo()
+
+    @st.cache_data(ttl=600)
+    def get_data_fat():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table.fat_content":{"$exists":"true"}},{"_id": 0, "product_data" :{ "nutrition_table" : 1, "name" : 1} })
+        items = list(items)
+        return items
+
+    fatItem = get_data_fat()
+
+    @st.cache_data(ttl=600)
+    def get_data_fib():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table.fiber_content":{"$exists":True}},{"_id": 0, "product_data" :{ "nutrition_table" : 1, "name" : 1} })
+        items = list(items)
+        return items
+
+    fibItem = get_data_fib()
+
+    @st.cache_data(ttl=600)
+    def get_data_nofib():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table.fiber_content":{"$exists":False}},{"_id": 0, "product_data" :{ "nutrition_table" : 1, "name" : 1} })
+        items = list(items)
+        return items
+
+    nofibItem = get_data_nofib()
+
+    countF = 0
+
+    for i in fibItem: 
+        countF += 1
+
+    st.title(countF)
+
+    @st.cache_data(ttl=600)
+    def get_data_prot():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table.protein_content":{"$exists":"true"}},{"_id": 0, "product_data" :{ "nutrition_table" : 1, "name" : 1} })
+        items = list(items)
+        return items
+
+    protItem = get_data_prot()
+
+    @st.cache_data(ttl=600)
+    def get_data_satf():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table.saturated_fat_content":{"$exists":"true"}},{"_id": 0, "product_data" :{ "nutrition_table" : 1, "name" : 1} })
+        items = list(items)
+        return items
+
+    satfItem = get_data_satf()
+
+    #Anzeigen Nährstoffe eines Produktes
+
+    title = st.text_input("Produkt auswählen", "Holle frucht pur Pouchy Birne & Aprikose - Bio - 90g - vekoop.de")
+    st.write("Das ausgewählte Produkt ist: ", title)
+
+    for i in allItems : 
+        if i["product_data"]["name"] == title and i["shop_url"] == "https://www.edeka24.de/" :
+            st.write("Genau dieses Produkt gibt es im Edeka")
+        elif i["product_data"]["name"] == title and i["shop_url"] == "https://www.vekoop.de/" :
+            st.write("Genau dieses Produkt gibt es im Vekoop")
+
+    left, right = st.columns(2)
+
+    with left: 
+        # Kalorien Anzeige
+        for i in calItem : 
+            if i["product_data"]["name"] == title and i["product_data"]["nutrition_table"]["calories"]:
+                st.subheader("Kalorien")
+                st.write("Kalorien in kJ: " , str(i["product_data"]["nutrition_table"]["calories"][0]["value"]))
+                st.write("Kalorien in kcal: " , str(i["product_data"]["nutrition_table"]["calories"][1]["value"]))
+        
+        # Carbohydrates Anzeige
+        for i in carbItem:
+            if i["product_data"]["name"] == title and i["product_data"]["nutrition_table"]["carbohydrate_content"]:
+                st.subheader("Kohlenhydrate")
+                st.write("Anzahl der Kohlenhydrate: " , str(i["product_data"]["nutrition_table"]["carbohydrate_content"]["value"]), " in ", i["product_data"]["nutrition_table"]["carbohydrate_content"]["unit"] )
+        
+        for i in fatItem:
+            if i["product_data"]["name"] == title and i["product_data"]["nutrition_table"]["fat_content"]:
+                st.subheader("Fettgehalt")
+                st.write("Anzahl der Fette: " , str(i["product_data"]["nutrition_table"]["fat_content"]["value"]), " in ", i["product_data"]["nutrition_table"]["fat_content"]["unit"] )
+        
+        for i in range(len(fibItem)):
+            if fibItem[i]["product_data"]["name"] == title and fibItem[i]["product_data"]["nutrition_table"]["fiber_content"]:
+                st.subheader("Ballaststoffgehalt")
+                st.write("Anzahl der Fette: " , str(fibItem[i]["product_data"]["nutrition_table"]["fiber_content"]["value"]), " in ", fibItem[i]["product_data"]["nutrition_table"]["fiber_content"]["unit"] )
+    
+
+    with right : 
+        for i in protItem : 
+            if i["product_data"]["name"] == title and i["product_data"]["nutrition_table"]["protein_content"]:
+                st.subheader("Proteine")
+                st.write("Anzahl der Proteine: " , str(i["product_data"]["nutrition_table"]["protein_content"]["value"]), " in ", i["product_data"]["nutrition_table"]["protein_content"]["unit"] )
+
+        for i in satfItem : 
+            if i["product_data"]["name"] == title and i["product_data"]["nutrition_table"]["saturated_fat_content"]:
+                st.subheader("Gesättigte Fettsäuren")
+                st.write("Anzahl der gesättigten Fettsäuren: " , str(i["product_data"]["nutrition_table"]["saturated_fat_content"]["value"]), " in ", i["product_data"]["nutrition_table"]["saturated_fat_content"]["unit"] )
+    
+        

@@ -6,8 +6,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 st.set_page_config(
+    layout="wide",
     page_title="Startseite",
-    page_icon="random",
+    page_icon="random"
 )
 
 col1, col2 = st.columns(2)
