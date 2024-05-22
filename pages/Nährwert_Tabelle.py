@@ -198,7 +198,7 @@ if choice == "Nährwerte Produkte":
 
 
 if choice == "Nährwert ein Produkt" :
-    st.title("Nährwerte eines ausgewählten Produkt")
+    st.title("Nährwerte eines ausgewählten Produktes")
 
     @st.cache_data(ttl=600)
     def get_data():
@@ -210,13 +210,13 @@ if choice == "Nährwert ein Produkt" :
     allItems = get_data()
 
     @st.cache_data(ttl=600)
-    def get_dataNoTable():
+    def get_dataNutri():
         db = client.mydb
-        items = db.mycollection.find({"product_data.nutrition_table":{"$exists":False}},{"_id": 0,  "shop_url" : 1 , "product_data" :{ "nutrition_table" : 1, "name" : 1} })
+        items = db.mycollection.find({"product_data.nutrition_table":{"$exists":True}},{"_id": 0,  "shop_url" : 1 , "product_data" :{"name" : 1} })
         items = list(items)
         return items
     
-    noNutrition = get_data()
+    nutri = get_dataNutri()
 
     @st.cache_data(ttl=600)
     def get_data_cal():
@@ -283,12 +283,12 @@ if choice == "Nährwert ein Produkt" :
 
     #Anzeigen Nährstoffe eines Produktes
 
-    title = st.text_input("Produkt auswählen", "Holle frucht pur Pouchy Birne & Aprikose - Bio - 90g - vekoop.de")
+    title = st.text_input("Produktname eintippen", "Holle frucht pur Pouchy Birne & Aprikose - Bio - 90g - vekoop.de")
     
     container = st.container(border = True)
 
     with container:
-        st.write("Das ausgewählte Produkt ist: ", title)
+        st.write(f"Das ausgewählte Produkt ist:&nbsp; **{title}**")
         for i in allItems : 
             if i["product_data"]["name"] == title and i["shop_url"] == "https://www.edeka24.de/" :
                 st.write("Genau dieses Produkt gibt es im **Edeka**")
@@ -297,13 +297,13 @@ if choice == "Nährwert ein Produkt" :
 
     searchItem = False
 
-    for i in range(len(noNutrition)) :
-        if noNutrition[i]["product_data"]["name"] == title :
-            searchItem = False
-        elif noNutrition[i]["product_data"]["name"] != title :
+    for i in nutri :
+        if i["product_data"]["name"] == title :
             searchItem = True
+
             
-    
+    #st.write(searchItem)
+
     left, right = st.columns(2)
 
     if searchItem:
@@ -344,4 +344,4 @@ if choice == "Nährwert ein Produkt" :
                     st.write("Anzahl der gesättigten Fettsäuren: " , str(i["product_data"]["nutrition_table"]["saturated_fat_content"]["value"]), " in ", i["product_data"]["nutrition_table"]["saturated_fat_content"]["unit"] )
     
     elif searchItem == False :
-        st.write("- Dieses Produkt enthält **keine Nährwerttabelle**")
+        st.write("Dieses Produkt enthält **keine Nährwerttabelle**")
