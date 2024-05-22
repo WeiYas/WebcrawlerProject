@@ -5,6 +5,13 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 
+@st.cache_resource
+def init_connection():
+    connection_string = st.secrets["mongo"]["connection_string"]
+    return pymongo.MongoClient(connection_string)
+
+client = init_connection()
+
 st.title("Anzahl Produkte in einer spezifischen Preisgruppe")
 
 shop = st.sidebar.radio(
@@ -13,14 +20,8 @@ shop = st.sidebar.radio(
     index=None,)
 
 range = st.slider('Wähle eine Preisrange aus', value = [0,500])
-st.write('Ausgewählte Range:', range[0]," bis " , range[1]," EUR")
 
-@st.cache_resource
-def init_connection():
-    connection_string = st.secrets["mongo"]["connection_string"]
-    return pymongo.MongoClient(connection_string)
-
-client = init_connection()
+container = st.container(border=True)
 
 @st.cache_data(ttl=600)
 def get_data():
@@ -38,7 +39,10 @@ for item in items:
     price = item["product_data"]["price"]
     if int(float(price)) <= range[1] and int(float(price)) >= range[0] :
         count += 1
-st.write("Number of products in this range:", range[0] , " to ", range[1], "EUR is: ", count)
+
+with container: 
+    st.write("- **Ausgewählter Bereich:**", str(range[0])," bis " , str(range[1])," EUR")
+    st.write("- **Anzahl Produkte in diesem Bereich:**", str(range[0]) , " to ", str(range[1]), "EUR is: ", str(count))
 
 if shop == "Edeka" :
     countT = 0
