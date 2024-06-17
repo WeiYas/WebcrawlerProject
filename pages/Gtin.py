@@ -14,6 +14,8 @@ def init_connection():
 
 client = init_connection()
 
+st.title("Produkte mit Gtin")
+st.markdown('<style>h1{font-size:25px;} h3{font-size:20px;}</style>', unsafe_allow_html=True)
 tabAll , tabCompare = st.tabs(["Gtin Vorhanden","Produkte gleicher Gtin"])
 
 with tabAll : 
@@ -54,7 +56,7 @@ with tabAll :
     })
     # ANZEIGE AUF BROWSER
 
-    st.title("Produkte mit Gtin")
+    
     st.write(" ")
 
     st.subheader("Wieviele Produkte besitzen einen gtin?")

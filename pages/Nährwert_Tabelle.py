@@ -17,97 +17,131 @@ def init_connection():
 
 client = init_connection()
 
+st.markdown('<style>h1{font-size:25px;} h3{font-size:20px;}</style>', unsafe_allow_html=True)
 
-def get_data_nutri():
-    db = client.mydb
-    items = db.mycollection.find({"product_data.nutrition_table":{"$exists":"true"}} , {"_id": 0,  "shop_url" : 1 , "product_data" :{"name" : 1, "nutrition_table" : 1} })
-    items = list(items)
-    return items
+start = time.time()
 
-def get_data():
-    db = client.mydb
-    items = db.mycollection.find({},{"_id": 0,  "shop_url" : 1 , "product_data" :{ "nutrition_table" : 1 , "name" : 1} })
-    items = list(items)
-    return items
+with st.spinner('Daten werden geladen') :
+    @st.cache_data(ttl=600,show_spinner = False)
+    def get_data_nutri():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table":{"$exists":"true"}} , {"_id": 0,  "shop_url" : 1 , "product_data" :{"name" : 1, "nutrition_table" : 1} })
+        items = list(items)
+        return items
+
+    @st.cache_data(ttl=600,show_spinner = False)
+    def get_data():
+        db = client.mydb
+        items = db.mycollection.find({},{"_id": 0,  "shop_url" : 1 , "product_data" :{ "nutrition_table" : 1 , "name" : 1} })
+        items = list(items)
+        return items
+        
+    nutri = get_data_nutri()
+
+    @st.cache_data(ttl=600,show_spinner = False)
+    def get_data_cal():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table.calories":{"$exists":True}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
+        items = list(items)
+        return items
+
+    @st.cache_data(ttl=600,show_spinner = False)
+    def get_data_carbo():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table.carbohydrate_content":{"$exists":True}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
+        items = list(items)
+        return items
+
+    @st.cache_data(ttl=600,show_spinner = False)
+    def get_data_fat():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table.fat_content":{"$exists":True}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
+        items = list(items)
+        return items
+
+    @st.cache_data(ttl=600,show_spinner = False)
+    def get_data_fiber():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table.fiber_content":{"$exists":True}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
+        items = list(items)
+        return items
+
+    @st.cache_data(ttl=600,show_spinner = False)
+    def get_data_nofib():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table.fiber_content":{"$exists":False}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
+        items = list(items)
+        return items
+
+    @st.cache_data(ttl=600,show_spinner = False)
+    def get_data_prot():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table.protein_content":{"$exists":"true"}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
+        items = list(items)
+        return items
+
+    @st.cache_data(ttl=600,show_spinner = False)
+    def get_data_satf():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table.saturated_fat_content":{"$exists":"true"}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
+        items = list(items)
+        return items
+
+    @st.cache_data(ttl=600,show_spinner = False)
+    def get_data_sod():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table.saturated_fat_content":{"$exists":True}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
+        items = list(items)
+        return items
+
+    @st.cache_data(ttl=600,show_spinner = False)
+    def get_data_sug():
+        db = client.mydb
+        items = db.mycollection.find({"product_data.nutrition_table.sugar_content":{"$exists":True}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
+        items = list(items)
+        return items
     
-nutri = get_data_nutri()
+    #nutri-variable und Ladezeit
+    startnutri = time.time()
+    tableJa = get_data_nutri()
+    endnutri = time.time()
+    lengthnutri = endnutri - startnutri
+    st.write("Ladezeit von allem mit nutrition_table: ", lengthnutri)
 
+    #Kohlenhydrate-variable und Ladezeit
+    startall = time.time()
+    allItems = get_data()
+    endall = time.time()
+    lengthall = endall - startall
+    st.write("Ladezeit Carbohydrate: ", lengthall)
 
-def get_data_cal():
-    db = client.mydb
-    items = db.mycollection.find({"product_data.nutrition_table.calories":{"$exists":True}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
-    items = list(items)
-    return items
+    #Kalorien-variable und Ladezeit
+    startcal = time.time()
+    cal = get_data_cal()
+    endcal = time.time()
+    lengthcal = endcal - startcal
+    st.write("Ladezeit Kalorien: ", lengthcal)
 
-def get_data_carbo():
-    db = client.mydb
-    items = db.mycollection.find({"product_data.nutrition_table.carbohydrate_content":{"$exists":True}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
-    items = list(items)
-    return items
+    #Kohlenhydrate-variable und Ladezeit
+    startcarb = time.time()
+    carbo = get_data_carbo()
+    endcarb = time.time()
+    lengthcarb = endcarb - startcarb
+    st.write("Ladezeit Carbohydrate: ", lengthcarb)
 
-@st.cache_data(ttl=600)
-def get_data_fat():
-    db = client.mydb
-    items = db.mycollection.find({"product_data.nutrition_table.fat_content":{"$exists":True}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
-    items = list(items)
-    return items
+    fat = get_data_fat()
+    fiber = get_data_fiber()
+    nofibItem = get_data_nofib()
+    protItem = get_data_prot()
+    satfItem = get_data_satf()
+    sodItem = get_data_sod()
+    sugItem = get_data_sug()
 
-@st.cache_data(ttl=600)
-def get_data_fiber():
-    db = client.mydb
-    items = db.mycollection.find({"product_data.nutrition_table.fiber_content":{"$exists":True}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
-    items = list(items)
-    return items
+# Calculate the end time and time taken
+end = time.time()
+length = end - start
 
-@st.cache_data(ttl=600)
-def get_data_nofib():
-    db = client.mydb
-    items = db.mycollection.find({"product_data.nutrition_table.fiber_content":{"$exists":False}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
-    items = list(items)
-    return items
-
-@st.cache_data(ttl=600)
-def get_data_prot():
-    db = client.mydb
-    items = db.mycollection.find({"product_data.nutrition_table.protein_content":{"$exists":"true"}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
-    items = list(items)
-    return items
-
-@st.cache_data(ttl=600)
-def get_data_satf():
-    db = client.mydb
-    items = db.mycollection.find({"product_data.nutrition_table.saturated_fat_content":{"$exists":"true"}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
-    items = list(items)
-    return items
-
-@st.cache_data(ttl=600)
-def get_data_sod():
-    db = client.mydb
-    items = db.mycollection.find({"product_data.nutrition_table.saturated_fat_content":{"$exists":True}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
-    items = list(items)
-    return items
-
-@st.cache_data(ttl=600)
-def get_data_sug():
-    db = client.mydb
-    items = db.mycollection.find({"product_data.nutrition_table.sugar_content":{"$exists":True}},{"_id": 0, "product_data" :{ "nutrition_table" : 1} })
-    items = list(items)
-    return items
-
-
-
-tableJa = get_data_nutri()
-tableAll = get_data()
-allItems = get_data()
-cal = get_data_cal()
-carbo = get_data_carbo()
-fat = get_data_fat()
-fiber = get_data_fiber()
-nofibItem = get_data_nofib()
-protItem = get_data_prot()
-satfItem = get_data_satf()
-sodItem = get_data_sod()
-sugItem = get_data_sug()
+st.write("Gesamte Ladezeit: ", length)
 
 count = 0
 countJa = 0
@@ -116,7 +150,7 @@ countNe = 0
 for i in tableJa :
     countJa += 1
 
-for i in tableAll : 
+for i in allItems : 
     count += 1
 
 countNe = count - countJa
@@ -187,7 +221,7 @@ if choice == "Nährwerte Produkte":
             for item in sugItem:
                 countsug += 1
             
-            st.write("**Produkte mit Proteinen**" , str(countfib))
+            st.write("**Produkte mit Proteinen**" , str(countprot))
             st.write("**Produkte mit gesättigten Fettsäuren**" , str(countsf))
             st.write("**Produkte mit Natrium**" , str(countsod))
             st.write("**Produkte mit Zuckeranteil**" , str(countsug))
@@ -238,34 +272,34 @@ if choice == "Nährwert ein Produkt" :
             for i in nutri : 
                 if i["product_data"]["name"] == title and i["product_data"]["nutrition_table"]["calories"]:
                     st.subheader("Kalorien")
-                    st.write("Kalorien in kJ: " , str(i["product_data"]["nutrition_table"]["calories"][0]["value"]))
-                    st.write("Kalorien in kcal: " , str(i["product_data"]["nutrition_table"]["calories"][1]["value"]))
+                    st.write("Anteil an Kalorien in kJ: " , str(i["product_data"]["nutrition_table"]["calories"][0]["value"]))
+                    st.write("Anteil an Kalorien in kcal: " , str(i["product_data"]["nutrition_table"]["calories"][1]["value"]))
                 if i["product_data"]["name"] == title and i["product_data"]["nutrition_table"]["carbohydrate_content"]:
                         st.subheader("Kohlenhydrate")
-                        st.write("Anzahl der Kohlenhydrate: " , str(i["product_data"]["nutrition_table"]["carbohydrate_content"]["value"]), " in ", i["product_data"]["nutrition_table"]["carbohydrate_content"]["unit"] )
+                        st.write("Anteil an Kohlenhydraten in " , i["product_data"]["nutrition_table"]["carbohydrate_content"]["unit"], ": ", str(i["product_data"]["nutrition_table"]["carbohydrate_content"]["value"]) )
             # Carbohydrates Anzeige
                
             for i in fat:
                 if i["product_data"]["name"] == title and i["product_data"]["nutrition_table"]["fat_content"]:
                     st.subheader("Fettgehalt")
-                    st.write("Anzahl der Fette: " , str(i["product_data"]["nutrition_table"]["fat_content"]["value"]), " in ", i["product_data"]["nutrition_table"]["fat_content"]["unit"] )
+                    st.write("Anteil an Fetten in ", i["product_data"]["nutrition_table"]["fat_content"]["unit"] ,": ",str(i["product_data"]["nutrition_table"]["fat_content"]["value"]) )
             
             for i in range(len(fiber)):
                 if fiber[i]["product_data"]["name"] == title and fiber[i]["product_data"]["nutrition_table"]["fiber_content"]:
                     st.subheader("Ballaststoffgehalt")
-                    st.write("Anzahl der Fette: " , str(fiber[i]["product_data"]["nutrition_table"]["fiber_content"]["value"]), " in ", fiber[i]["product_data"]["nutrition_table"]["fiber_content"]["unit"] )
+                    st.write("Anteil an Fetten in " , fiber[i]["product_data"]["nutrition_table"]["fiber_content"]["unit"],": ", str(fiber[i]["product_data"]["nutrition_table"]["fiber_content"]["value"]) )
         
 
         with right : 
             for i in protItem : 
                 if i["product_data"]["name"] == title and i["product_data"]["nutrition_table"]["protein_content"]:
                     st.subheader("Proteine")
-                    st.write("Anzahl der Proteine: " , str(i["product_data"]["nutrition_table"]["protein_content"]["value"]), " in ", i["product_data"]["nutrition_table"]["protein_content"]["unit"] )
+                    st.write("Anzahl an Proteinen in " ,i["product_data"]["nutrition_table"]["protein_content"]["unit"] , ": ", str(i["product_data"]["nutrition_table"]["protein_content"]["value"]))
 
             for i in satfItem : 
                 if i["product_data"]["name"] == title and i["product_data"]["nutrition_table"]["saturated_fat_content"]:
                     st.subheader("Gesättigte Fettsäuren")
-                    st.write("Anzahl der gesättigten Fettsäuren: " , str(i["product_data"]["nutrition_table"]["saturated_fat_content"]["value"]), " in ", i["product_data"]["nutrition_table"]["saturated_fat_content"]["unit"] )
+                    st.write("Anteil der gesättigten Fettsäuren in ", i["product_data"]["nutrition_table"]["saturated_fat_content"]["unit"], ": ",str(i["product_data"]["nutrition_table"]["saturated_fat_content"]["value"]) )
     
     elif searchItem == False :
         st.write("Dieses Produkt enthält **keine Nährwerttabelle**")

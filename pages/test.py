@@ -1,11 +1,7 @@
 import streamlit as st
 import numpy as np
+import matplotlib.pyplot as plt
 
-col1, col2 = st.columns([3, 1])
-data = np.random.randn(10, 1)
-
-col1.subheader("A wide column with a chart")
-col1.line_chart(data)
-
-col2.subheader("A narrow column with the data")
-col2.write(data)
+st.markdown('<style>.stSlider {background-color: coral;}</style>', unsafe_allow_html=True)
+st.markdown('<footer> <p>Umweltcampus Birkenfeld</p> </p></footer>',unsafe_allow_html=True)
+st.slider('hi',0,10)

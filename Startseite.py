@@ -11,6 +11,8 @@ st.set_page_config(
     page_icon="random"
 )
 
+st.markdown('<style>h1{font-size:25px;} h3{font-size:20px;}</style>', unsafe_allow_html=True)
+
 col1, col2 = st.columns(2)
 
 with col1:
@@ -28,3 +30,4 @@ st.markdown(
 )
 
 
+st.markdown('<style> .footer{position: fixed;left: 0;bottom: 0;width: 100%;color: black;text-align: center;}</style> <div class="footer"><p>Umwelt-Campus Birkenfeld</p></div>',unsafe_allow_html=True)

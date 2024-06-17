@@ -12,10 +12,11 @@ def init_connection():
 
 client = init_connection()
 
+st.markdown('<style>h1{font-size:25px;} h3{font-size:20px;}</style>', unsafe_allow_html=True)
 st.title("Anzahl Produkte in einer spezifischen Preisgruppe")
 
 shop = st.sidebar.radio(
-    "Choose 1 shop",
+    "Wähle 1 Shop aus",
     ["Edeka", "Vekoop"],
     index=None,)
 

@@ -8,6 +8,7 @@ import altair as alt
 
 st.title("Verteilung Attribute ausgefüllt")
 st.write(" ")
+st.markdown('<style>h1{font-size:25px;} h3{font-size:20px;}</style>', unsafe_allow_html=True)
 onProduktverteilungGtin = st.sidebar.toggle("Ausgefüllte Attribute Anzeige",value=True)
 
 
@@ -71,3 +72,4 @@ if onProduktverteilungGtin :
     )
     st.altair_chart(c, use_container_width=True)
 
+st.markdown('<style> .footer{position: fixed;left: 0;bottom: 0;width: 100%;color: black;text-align: center;}</style> <div class="footer"><p>Umwelt-Campus Birkenfeld</p></div>',unsafe_allow_html=True)
