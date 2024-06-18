@@ -18,7 +18,7 @@ def init_connection():
 client = init_connection()
 
 st.markdown('<style>h1{font-size:25px;} h3{font-size:20px;}</style>', unsafe_allow_html=True)
-
+st.title("Nährwerte Übersicht")
 
 # Calculate the start time
 start = time.time()
@@ -96,9 +96,17 @@ with st.spinner('Daten werden geladen') :
         items = list(items)
         return items
 
-
+    startnutri = time.time()
     nutri = get_data_nutri()
+    endnutri = time.time()
+    lengthnutri = endnutri - startnutri
+    st.write("Ladezeit aller Produkte mit Nährwert Tabelle: ", lengthnutri)
+
+    startall = time.time()
     allItems = get_data()
+    endall = time.time()
+    lengthall = endall - startall
+    st.write("Ladezeit alle Produkte: ", lengthall)
 
     #Kalorien-variable und Ladezeit
     startcal = time.time()
@@ -114,14 +122,42 @@ with st.spinner('Daten werden geladen') :
     lengthcarb = endcarb - startcarb
     st.write("Ladezeit Carbohydrate: ", lengthcarb)
 
-    
+    startfat = time.time()
     fat = get_data_fat()
+    endfat = time.time()
+    lengthfat = endfat - startfat
+    st.write("Ladezeit Fette: ", lengthfat)
+    
+    startfiber = time.time()
     fiber = get_data_fiber()
-    #nofibItem = get_data_nofib()
+    endfiber = time.time()
+    lengthfiber = endfiber - startfiber
+    st.write("Ladezeit Ballaststoffe: ", lengthfiber)
+
+    startprot = time.time()
     protItem = get_data_prot()
+    endprot = time.time()
+    lengthprot = endprot - startprot
+    st.write("Ladezeit Proteine: ", lengthprot)
+
+    startsatf = time.time()
     satfItem = get_data_satf()
+    endsatf = time.time()
+    lengthsatf = endsatf - startsatf
+    st.write("Ladezeit Gesättigte Fettsäuren: ", lengthsatf)
+    
+    startsod = time.time()
     sodItem = get_data_sod()
+    endsod = time.time()
+    lengthsod = endsod - startsod
+    st.write("Ladezeit Natrium: ", lengthsod)
+
+    startsug = time.time()
     sugItem = get_data_sug()
+    endsug = time.time()
+    lengthsug = endsug - startsug
+    st.write("Ladezeit Zuckergehalt: ", lengthsug)
+    
 
     count = 0
     countJa = 0
