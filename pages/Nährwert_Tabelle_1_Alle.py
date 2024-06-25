@@ -272,10 +272,16 @@ if choice == "Nährwert ein Produkt" :
     
     container = st.container(border = True)
 
+    
+
     with container:
         st.write(f"Das ausgewählte Produkt ist:&nbsp; **{title}**")
         for i in allItems : 
-            if i["product_data"]["name"] == title and i["shop_url"] == "https://www.edeka24.de/" :
+            full_name = i["product_data/name"]
+            search_name = full_name.find(title)
+            shop_url = i["product_"]
+
+            if i["product_data/name"] == title and i["shop_url"] == "https://www.edeka24.de/" :
                 st.write("Genau dieses Produkt gibt es im **Edeka**")
             elif i["product_data"]["name"] == title and i["shop_url"] == "https://www.vekoop.de/" :
                 st.write("Genau dieses Produkt gibt es im **Vekoop**")

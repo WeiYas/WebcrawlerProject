@@ -29,7 +29,7 @@ with st.spinner('Daten werden geladen') :
     @st.cache_data(ttl=600,show_spinner = False)
     def get_data_nutri():
         db = client.mydb
-        items = db.nutri_flatten.find({},{"_id" : 0})
+        items = db.nutrition_flatten.find({},{"_id" : 0})
         items = list(items)
         return items
 
@@ -43,56 +43,56 @@ with st.spinner('Daten werden geladen') :
     @st.cache_data(ttl=600,show_spinner = False)
     def get_data_cal():
         db = client.mydb
-        items = db.nutri_flatten.find({"$expr": { "$gt": [ { "$getField": "calories.calories_kJ.value" }, 0 ] }},{})
+        items = db.nutrition_flatten.find({'$expr': { '$getField': 'calories.calories_kcal.value' }},{})
         items = list(items)
         return items
 
     @st.cache_data(ttl=600,show_spinner = False)
     def get_data_carbo():
         db = client.mydb
-        items = db.nutri_flatten.find({'$expr': { '$getField': 'carbohydrate_content.value' }},{})
+        items = db.nutrition_flatten.find({'$expr': { '$getField': 'carbohydrate_content.value' }},{})
         items = list(items)
         return items
 
     @st.cache_data(ttl=600,show_spinner = False)
     def get_data_fat():
         db = client.mydb
-        items = db.nutri_flatten.find({'$expr': { '$getField': 'fat_content.value' }},{})
+        items = db.nutrition_flatten.find({'$expr': { '$getField': 'fat_content.value' }},{})
         items = list(items)
         return items
 
     @st.cache_data(ttl=600,show_spinner = False)
     def get_data_fiber():
         db = client.mydb
-        items = db.nutri_flatten.find({'$expr': { '$getField': 'fiber_content.value' }},{})
+        items = db.nutrition_flatten.find({'$expr': { '$getField': 'fiber_content.value' }},{})
         items = list(items)
         return items
 
     @st.cache_data(ttl=600,show_spinner = False)
     def get_data_prot():
         db = client.mydb
-        items = db.nutri_flatten.find({"$expr": { "$getField": "protein_content.value" }},{})
+        items = db.nutrition_flatten.find({"$expr": { "$getField": "protein_content.value" }},{})
         items = list(items)
         return items
 
     @st.cache_data(ttl=600,show_spinner = False)
     def get_data_satf():
         db = client.mydb
-        items = db.nutri_flatten.find({'$expr': { '$getField': 'saturated_fat_content.value' }},{})
+        items = db.nutrition_flatten.find({'$expr': { '$getField': 'saturated_fat_content.value' }},{})
         items = list(items)
         return items
 
     @st.cache_data(ttl=600,show_spinner = False)
     def get_data_sod():
         db = client.mydb
-        items = db.nutri_flatten.find({'$expr': { '$getField': 'sodium_content.value' }},{})
+        items = db.nutrition_flatten.find({'$expr': { '$getField': 'sodium_content.value' }},{})
         items = list(items)
         return items
 
     @st.cache_data(ttl=600,show_spinner = False)
     def get_data_sug():
         db = client.mydb
-        items = db.nutri_flatten.find({"$expr": { '$getField': 'sugar_content.value' }},{})
+        items = db.nutrition_flatten.find({"$expr": { '$getField': 'sugar_content.value' }},{})
         items = list(items)
         return items
 

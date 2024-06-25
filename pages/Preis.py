@@ -27,7 +27,7 @@ container = st.container(border=True)
 @st.cache_data(ttl=600)
 def get_data():
     db = client.mydb
-    items = db.mycollection.find({"product_data.price":{"$exists":True}},{"product_data" : {"price":1 , "name" : 1},"shop_url":1})
+    items = db.all_flatten.find({},{})
     items = list(items)
     return items
 
@@ -38,10 +38,13 @@ countV = 0
 arr = []
 
 for i in range(len(items)) : 
-    if items[i]["product_data"]["price"] :
-        price = items[i]["product_data"]["price"]
-        if int(float(price)) <= rangeS[1] and int(float(price)) >= rangeS[0] :
-            count += 1
+    try:
+        if items[i]["product_data/price"] :
+            price = items[i]["product_data/price"]
+            if int(float(price)) <= rangeS[1] and int(float(price)) >= rangeS[0] :
+                count += 1
+    except:
+        pass
 
 with container: 
     st.write("- **Ausgewählter Bereich:**", str(rangeS[0])," bis " , str(rangeS[1])," EUR")
@@ -51,11 +54,15 @@ if shop == "Edeka" :
     countT = 0
     st.subheader(shop)
     for item in items :
-        if item["shop_url"] == "https://www.edeka24.de/":
-            priceE = item["product_data"]["price"]
-            countT += 1
-            if int(float(priceE)) <= rangeS[1] and int(float(priceE)) >= rangeS[0] :
-                countE += 1
+        try:
+            if item["shop_url"] == "https://www.edeka24.de/":
+                priceE = item["product_data/price"]
+                countT += 1
+                if int(float(priceE)) <= rangeS[1] and int(float(priceE)) >= rangeS[0] :
+                    countE += 1
+        except:
+            pass
+    
     st.write("Anzahl Produkte in Preiskategorie:", countE)
     chart_data = pd.DataFrame({'name': ["Ausgewählte","Totale Anzahl"], 'number of products':[countE,countT]})
     chart_data = chart_data.set_index('name')
@@ -66,11 +73,15 @@ if shop == "Vekoop" :
     countT = 0
     st.subheader("Vekoop:")
     for item in items :
-        if item["shop_url"] == "https://www.vekoop.de/":
-            priceV = item["product_data"]["price"]
-            countT += 1
-            if int(float(priceV)) <= rangeS[1] and int(float(priceV)) >= rangeS[0] :
-                countV += 1
+        try:
+            if item["shop_url"] == "https://www.vekoop.de/":
+                priceV = item["product_data/price"]
+                countT += 1
+                if int(float(priceV)) <= rangeS[1] and int(float(priceV)) >= rangeS[0] :
+                    countV += 1
+        except:
+            pass
+    
     st.write("Anzahl Produkte in Preiskategorie:", countV)
     chart_data = pd.DataFrame({'name': ["Ausgewählte","Totale Anzahl"], 'number of products':[countV,countT]})
     chart_data = chart_data.set_index('name')

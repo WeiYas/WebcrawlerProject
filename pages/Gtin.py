@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import altair as alt
 import array
+import plotly.graph_objects as go
 
 @st.cache_resource
 def init_connection():
@@ -21,38 +22,33 @@ tabAll , tabCompare = st.tabs(["Gtin Vorhanden","Produkte gleicher Gtin"])
 with tabAll : 
 
     @st.cache_data(ttl=600)
-    def get_data_gtinJa():
-        db = client.mydb
-        items = db.mycollection.find({"product_data.gtin":{"$exists":"true"}}, {"_id" :0 , "product_data" : {"gtin" : 1}})
-        items = list(items)
-        return items
-
-    gtinJa = get_data_gtinJa()
-
-    @st.cache_data(ttl=600)
     def get_data():
         db = client.mydb
-        items = db.mycollection.find({}, {"_id" :1})
+        items = db.all_flatten.find({}, {})
         items = list(items)
         return items
 
-    gtinNein = get_data()
+    gtin = get_data()
 
     countGtin = 0
-    countNogtin = 0
-    count = 0
-    for item in gtinJa:
-        countGtin += 1
+    countNoGtin = 0
 
-    for item in gtinNein :
-        count += 1
+    for i in gtin :
+        try: 
+            if i["product_data/gtin"] :
+                countGtin += 1
+        except:
+            pass
+        try :
+            if not i["product_data/gtin"] : 
+                countNoGtin += 1
+        except:
+            pass
 
-    countNogtin = count - countGtin
-    # st.write(countGtin)
 
     chart_data = pd.DataFrame({
     'Gtin vorhanden': ["ja","nein"],
-    'Anzahl Produkte':[countGtin,countNogtin]
+    'Anzahl Produkte':[countGtin,countNoGtin]
     })
     # ANZEIGE AUF BROWSER
 
@@ -64,7 +60,7 @@ with tabAll :
     container = st.container(border = True)
     with container:
         st.write("- Anzahl von Produkten mit gtin: ", countGtin)
-        st.write("- Anzahl von Produkten ohne gtin" , countNogtin)
+        st.write("- Anzahl von Produkten ohne gtin" , countNoGtin)
 
             #chart_data = chart_data.set_index('Gtin vorhanden')
             #st.bar_chart(chart_data)
@@ -78,81 +74,106 @@ with tabCompare :
 
     options = st.multiselect(
         "Wähle Geschäfte und zeige welche Produkte in diesen gleichzeitig zur Verfügung stehen",
-        ["Edeka", "Vekoop","Globus"])
+        ["Edeka", "Vekoop","Globus", "Supermarkt24h"])
     st.write("Nur Produkte mit registriertem gtin können angezeigt werden")
-    st.write(len(options))
+    #st.write(len(options))
 
     @st.cache_data(ttl=600)
-    def get_data_gtin():
+    def get_data():
         db = client.mydb
-        items = db.mycollection.find({"product_data.gtin":{"$exists":True}}, {"_id" :0 , "product_data" : {"name" : 1 ,"gtin" : 1}, "shop_url":1})
+        items = db.all_flatten.find({}, {})
         items = list(items)
         return items
 
-    items = get_data_gtin()
+    items = get_data()
 
     # mehr als 2 shops
 
-    if len(options) >= 2 :
+    if len(options) == 2 :
         with st.spinner('Daten werden geladen...'):
-            time.sleep(50)
 
-        numShop = len(options)
-        urls = ["https://www.edeka24.de/","https://www.vekoop.de/"]
+            numShop = len(options)
+            urls = ["https://www.edeka24.de/","https://www.vekoop.de/", "https://www.globus.de/", "https://www.supermarkt24h.de/"]
 
-        arr0 = []
-        arr1 = []
-        #arr2 = []
-        #arr3 = []
-        #arr4 = []
-        #arr5 = []
-        #arr6 = []
+            arrE,arrV,arrG, arrS = [],[],[],[]       
+            arrSameE,arrSameV,arrSameG,arrSameS = [], [],[],[]
+            name0, name1 = [] , []
+            lenG = 0
 
-        arrSame0 = []
-        arrSame1 = []
-
-        for i in range(numShop) : 
-            for item in items :
-                if i == 0 :
-                    if item["shop_url"] == urls[i] and options[i] == "Edeka":
-                        arr0.append(item["product_data"]["gtin"])
-                    if item["shop_url"] == urls[i] and options[i] == "Vekoop":
-                        arr0.append(item["product_data"]["gtin"])
-                if i == 1 :
-                    if item["shop_url"] == urls[i] and options[i] == "Edeka":
-                        arr1.append(item["product_data"]["gtin"])
-                    if item["shop_url"] == urls[i] and options[i] == "Vekoop":
-                        arr1.append(item["product_data"]["gtin"])
-
-        if len(options) == 2 :
-            for a in range(len(arr0)):
-                for b in range(len(arr1)) :
-                    if arr0[a] == arr1[b] :
-                        arrSame0.append(arr0[a])
-                        arrSame1.append(arr1[b])
-
-        st.subheader("Diese Produkte gibt es in beiden Geschäften")
-
-        first = st.checkbox(options[0])
-        second = st.checkbox(options[1])
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-            if first :
-                st.subheader(options[0], ":")
+            for i in range(numShop):
                 for item in items :
-                    for i in range(len(arrSame0)) :
-                        if item["shop_url"] == urls[0] and item["product_data"]["gtin"] == arrSame0[i] :
-                            st.write("- ", item["product_data"]["name"])
+                    if item["shop_url"] == "https://www.edeka24.de/" and options[i] == "Edeka" :
+                        arrE.append(item["product_data/gtin"])
+                    elif item["shop_url"] == "https://www.vekoop.de/" and options[i] == "Vekoop" :
+                        arrV.append(item["product_data/gtin"])
+                    elif item["shop_url"] == "https://www.globus.de/" and options[i] == "Globus" :
+                        arrG.append(item["product_data/gtin"])
+                    elif item["shop_url"] == "https://www.supermarkt24h.de/" and options[i] == "Supermarkt24h" :
+                        arrS.append(item["product_data/gtin"])
+                    
 
-        with col2:
-            if second:
-                st.subheader(options[1], ":")
-                for item in items :
-                    for i in range(len(arrSame1)) :
-                        if item["shop_url"] == urls[1] and item["product_data"]["gtin"] == arrSame1[i] :
-                            st.write("- ", item["product_data"]["name"])
+            if (options[0] == "Edeka" and options[1]=="Vekoop") or (options[1] == "Edeka" and options[0]=="Vekoop") :
+                for a in range(len(arrE)):
+                    for b in range(len(arrV)) :
+                        if arrE[a] == arrV[b] :
+                            arrSameE.append(arrE[a])
+                            arrSameV.append(arrV[b])
+            elif (options[0] == "Edeka" and options[1]=="Globus") or (options[1] == "Edeka" and options[0]=="Globus") :
+                for a in range(len(arrE)):
+                    for b in range(len(arrG)) :
+                        if arrE[a] == arrG[b] :
+                            arrSameE.append(arrE[a])
+                            arrSameG.append(arrG[b])
+            elif (options[0] == "Vekoop" and options[1]=="Globus") or (options[0] == "Globus" and options[1]=="Vekoop") :
+                for a in range(len(arrV)):
+                    for b in range(len(arrG)) :
+                        if arrV[a] == arrG[b] :
+                            arrSameV.append(arrV[a])
+                            arrSameG.append(arrG[b])
+            elif (options[0] == "Supermarkt24h" and options[1]=="Globus") or (options[0] == "Globus" and options[1]=="Supermarkt24h") :
+                for a in range(len(arrS)):
+                    for b in range(len(arrG)) :
+                        if arrS[a] == arrG[b] :
+                            arrSameS.append(arrS[a])
+                            arrSameG.append(arrG[b])
+            elif (options[0] == "Supermarkt24h" and options[1]=="Edeka") or (options[0] == "Edeka" and options[1]=="Supermarkt24h") :
+                for a in range(len(arrS)):
+                    for b in range(len(arrE)) :
+                        if arrS[a] == arrE[b] :
+                            arrSameS.append(arrS[a])
+                            arrSameE.append(arrE[b])
+
+                for i in range(len(arrSameS)) :    
+                    for item in items: 
+                        if item["product_data/gtin"] == arrSameS[i] and item["shop_url"] == "https://www.supermarkt24h.de/":
+                            name0.append(item["product_data/name"])
+                        if item["product_data/gtin"] == arrSameE[i] and item["shop_url"] == "https://www.edeka24.de/":
+                            name1.append(item["product_data/name"])
+                lenG = len(arrSameS)
+                print(len(arrSameS))
+                print(len(name0))
+                print(len(name1))
+
+                d = {'Gtin' : arrSameS, 'Name1' : name1}
+                
+
+
+                
+            st.subheader("Diese Produkte gibt es in beiden Geschäften")
+            #print(arrSameE)
+            #print(arrSameG)
+            
+            st.write("Anzahl gleicher Produkte: " ,str(lenG))
+
+            onTable = st.toggle("Zeige Daten")
+            if onTable :
+                df = pd.DataFrame(data = d)
+                st.table(df)
+
+
+
+
+            
 
 
 

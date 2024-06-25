@@ -14,8 +14,7 @@ onProduktverteilungGtin = st.sidebar.toggle("Ausgefüllte Attribute Anzeige",val
 
 @st.cache_resource
 def init_connection():
-    connection_string = st.secrets["mongo"]["connection_string"]
-    return pymongo.MongoClient(connection_string)
+    return pymongo.MongoClient("mongodb://localhost:27017/")
 
 client = init_connection()
 
