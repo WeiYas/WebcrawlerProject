@@ -33,67 +33,67 @@ with st.spinner('Daten werden geladen') :
         items = list(items)
         return items
 
-    @st.cache_data(ttl=600,show_spinner = False)
-    def get_data():
-        db = client.mydb
-        items = db.all_flatten.find({},{"_id": 0})
-        items = list(items)
-        return items
-
     startnutri = time.time()
-    nutri = get_data_nutri()
+    allItems = get_data_nutri()
     endnutri = time.time()
     lengthnutri = endnutri - startnutri
     st.write("Ladezeit aller Produkte mit Nährwert Tabelle: ", lengthnutri)
 
-    startall = time.time()
-    allItems = get_data()
-    endall = time.time()
-    lengthall = endall - startall
-    st.write("Ladezeit alle Produkte: ", lengthall)
+    count = 0
+    countCal, countCarbo, countFat, countFiber, countSatFat, countProt, countSod, countSug = 0,0,0,0,0,0,0,0
+    countJa = 0
+    countNe = 0
 
     cal, carbo, fat, fiber, prot, satf, sod, sug = [], [], [], [], [], [], [], []
 
     startAllNutri = time.time()
-    for item in nutri : 
+    for item in allItems : 
         try : 
             if item["product_data/nutrition_table/calories/calories_kcal/value"] :
                 cal.append(item["product_data/nutrition_table/calories/calories_kcal/value"])
+                countCal += 1
         except :
             pass
         try : 
             if item["product_data/nutrition_table/carbohydrate_content/value"]:
                 carbo.append(item["product_data/nutrition_table/carbohydrate_content/value"])
+                countCarbo += 1
         except :
             pass
         try : 
             if item["product_data/nutrition_table/fat_content/value"]:
                 fat.append(item["product_data/nutrition_table/fat_content/value"])
+                countFat += 1
         except :
             pass
         try : 
             if item["product_data/nutrition_table/fiber_content/value"] : 
                 fiber.append(item["product_data/nutrition_table/fiber_content/value"])
+                countFiber += 1
         except :
             pass
         try : 
             if item["product_data/nutrition_table/protein_content/value"] :
                 prot.append(item["product_data/nutrition_table/protein_content/value"])
+                countProt += 1
         except :
             pass
         try : 
             if item["product_data/nutrition_table/saturated_fat_content/value"]:
                 satf.append(item["product_data/nutrition_table/saturated_fat_content/value"])
+                countSatFat += 1
         except :
             pass
         try : 
             if item["product_data/nutrition_table/sodium_content/value"]:
                 sod.append(item["product_data/nutrition_table/sodium_content/value"])
+                countSod += 1
         except :
             pass
         try : 
             if item["product_data/nutrition_table/sugar_content/value"]:
                 sug.append(item["product_data/nutrition_table/sugar_content/value"])
+                countSug += 1
         except :
             pass
     endAllNutri = time.time()
@@ -101,9 +101,7 @@ with st.spinner('Daten werden geladen') :
     st.write("Alle Nährwerte Schleife Ladezeit: ", lengthAllNutri)
 
 
-    count = 0
-    countJa = 0
-    countNe = 0
+
 
 # Calculate the end time and time taken
 end = time.time()
@@ -111,13 +109,10 @@ length = end - start
 
 st.write("Gesamte Ladezeit: ", length)
 
-
-for i in nutri :
-    countJa += 1
-
-for i in allItems : 
+for i in allItems :
     count += 1
 
+countJa = countCal+ countCarbo+ countFat+ countFiber+countSatFat+countProt+ countSod+ countSug
 countNe = count - countJa
 
 #Attribute Anzeigen rechnen
@@ -215,7 +210,7 @@ if choice == "Nährwert ein Produkt" :
     with container:
         st.write(f"Das ausgewählte Produkt ist:&nbsp; **{title}**")
         edeka_arr , vekoop_arr = [] , []
-        
+
         for i in allItems : 
             full_name = i["product_data/name"]
             search_name = full_name.find(title)

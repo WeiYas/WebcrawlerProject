@@ -15,13 +15,6 @@ client = init_connection()
 st.markdown('<style>h1{font-size:25px;} h3{font-size:20px;}</style>', unsafe_allow_html=True)
 st.title("Anzahl Produkte in einer spezifischen Preisgruppe")
 
-shop = st.sidebar.radio(
-    "Wähle 1 Shop aus",
-    ["Edeka", "Vekoop"],
-    index=None,)
-
-rangeS = st.slider('Wähle eine Preisrange aus', value = [0,500])
-
 container = st.container(border=True)
 
 @st.cache_data(ttl=600)
@@ -37,6 +30,19 @@ countE = 0
 countV = 0
 arr = []
 
+
+with container: 
+    shop = st.radio(
+        "Wähle 1 Shop aus",
+        ["Edeka", "Vekoop"],
+        index=None,
+        horizontal=True)
+
+    rangeS = st.slider('Wähle eine Preisrange aus', value = [0,500])
+    
+    st.write("- **Ausgewählter Bereich:**", str(rangeS[0])," bis " , str(rangeS[1])," EUR")
+    st.write("- **Anzahl Produkte in diesem Bereich:**", str(rangeS[0]) , " to ", str(rangeS[1]), "EUR is: ", str(count))
+
 for i in range(len(items)) : 
     try:
         if items[i]["product_data/price"] :
@@ -45,10 +51,6 @@ for i in range(len(items)) :
                 count += 1
     except:
         pass
-
-with container: 
-    st.write("- **Ausgewählter Bereich:**", str(rangeS[0])," bis " , str(rangeS[1])," EUR")
-    st.write("- **Anzahl Produkte in diesem Bereich:**", str(rangeS[0]) , " to ", str(rangeS[1]), "EUR is: ", str(count))
 
 if shop == "Edeka" :
     countT = 0

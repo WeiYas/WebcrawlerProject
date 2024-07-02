@@ -15,22 +15,14 @@ def init_connection():
 
 client = init_connection()
 
-st.title("Anzahl Produkte pro Shop")
+st.title("Produkte je Shop")
 st.markdown('<style>h1{font-size:25px;} h3{font-size:20px;}</style>', unsafe_allow_html=True)
 
-tabOne , tabAll = st.tabs(["Einzelansicht","Gesamtsicht"])
+shop = st.sidebar.radio(
+        "Wähle die Ansicht aus: ",
+        ["Vergleich einzelne Shops", "Gesamtansicht Shops"],
+        index=None,)
 
-checkEdeka = st.sidebar.checkbox("Edeka")
-checkVekoop = st.sidebar.checkbox("Vekoop")
-checkGlobus = st.sidebar.checkbox("Globus")
-checkVolg = st.sidebar.checkbox("Volg")
-checkRewe = st.sidebar.checkbox("Rewe")
-checkLidl = st.sidebar.checkbox("Lidl")
-checkSuper = st.sidebar.checkbox("Supermarkt24h")
-checkHeine = st.sidebar.checkbox("Heinemann")
-checkMega = st.sidebar.checkbox("Mega Einkaufsparadies")
-
-checkArr = [checkEdeka,checkVekoop,checkSuper,checkVolg,checkGlobus,checkHeine,checkLidl,checkMega,checkRewe]
 
 @st.cache_data(ttl=600)
 def get_data():
@@ -39,11 +31,9 @@ def get_data():
     items = list(items)
     return items
 
-start = time.time()
+
 items = get_data()
 
-length = time.time() - start
-st.write("Daten werden in: ", length, "s geladen")
 count = 0
 countE = 0
 countV = 0
@@ -119,13 +109,34 @@ for item in items:
 
 
 #Einzelansicht
-with tabOne :
-   st.write("Wähle links zwei Shops aus um die miteinander zu vergleichen")
+if shop == "Vergleich einzelne Shops" :
+   container = st.container(border=True)
 
-   countTrue = 0
-   for i in range(len(checkArr)) :
-      if checkArr[i] == True :
-         countTrue += 1
+   with container :
+      st.subheader("Wähle 2 Shops aus um diese zu vergleichen")
+      col1, col2, col3, col4, col5 = st.columns(5)
+
+      with col1: 
+         checkEdeka = st.checkbox("Edeka")
+         checkLidl = st.checkbox("Lidl")
+      with col2: 
+         checkVekoop = st.checkbox("Vekoop")
+         checkSuper = st.checkbox("Supermarkt24h")
+      with col3:
+         checkGlobus = st.checkbox("Globus")
+         checkHeine = st.checkbox("Heinemann")
+      with col4:
+         checkVolg = st.checkbox("Volg")
+         checkMega = st.checkbox("Mega Einkaufsparadies")
+      with col5:
+         checkRewe = st.checkbox("Rewe")
+      
+      checkArr = [checkEdeka,checkVekoop,checkSuper,checkVolg,checkGlobus,checkHeine,checkLidl,checkMega,checkRewe]
+
+      countTrue = 0
+      for i in range(len(checkArr)) :
+         if checkArr[i] == True :
+            countTrue += 1
    
    if countTrue == 2:
 
@@ -386,7 +397,7 @@ with tabOne :
 
 
 #Gesamtansicht
-with tabAll :
+if shop == "Gesamtansicht Shops" :
       count = countV + countE + countG + countVo + countR + countL + countS + countH + countM
       chart_data = pd.DataFrame({
       'name': ["Edeka","Vekoop", "Globus" , "Volg", "Rewe", "Lidl", "Supermarkt24h" , "Heinemann", "Mega Einkaufsparadies"],

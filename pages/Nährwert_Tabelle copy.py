@@ -16,7 +16,7 @@ choice = st.sidebar.radio(
 
 @st.cache_resource
 def init_connection():
-    connection_string = st.secrets["mongo"]["connection_string"]
+    connection_string = "mongodb://localhost:27017/"
     return pymongo.MongoClient(connection_string)
 
 client = init_connection()
