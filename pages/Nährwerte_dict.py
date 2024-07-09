@@ -29,9 +29,20 @@ with st.spinner('Daten werden geladen') :
     @st.cache_data(ttl=600,show_spinner = False)
     def get_data_nutri():
         db = client.mydb
-        items = db.all_flatten.find({},{"_id" : 0})
+        items = db.all_flatten.find({},{"_id" : 0, "shop_url":1})
         items = list(items)
         return items
+    
+    nutri_list = get_data_nutri()
+    count_dict = {}
+
+    for key in nutri_list :
+        if key["shop_url"] not in count_dict :
+            count_dict[key["shop_url"]] = 1
+        else:
+            count_dict[key["shop_url"]] += 1
+
+    print(count_dict)
 
     startnutri = time.time()
     allItems = get_data_nutri()
@@ -46,17 +57,12 @@ with st.spinner('Daten werden geladen') :
 
     cal, carbo, fat, fiber, prot, satf, sod, sug = [], [], [], [], [], [], [], []
 
-    for i in allItems : 
-        count += 1
-
-    print(count)
-
     startAllNutri = time.time()
     for item in allItems : 
         try : 
             if item["product_data/nutrition_table/calories/calories_kcal/value"] :
                 cal.append(item["product_data/nutrition_table/calories/calories_kcal/value"])
-                
+                countCal += 1
                 
         except :
             pass
@@ -105,13 +111,12 @@ with st.spinner('Daten werden geladen') :
                 sug.append(item["product_data/nutrition_table/sugar_content/value"])
                 countSug += 1
         except :
+            countJa +=1
             pass
     
     endAllNutri = time.time()
     lengthAllNutri = endAllNutri - startAllNutri
     st.write("Alle Nährwerte Schleife Ladezeit: ", lengthAllNutri)
-
-
 
 # Calculate the end time and time taken
 end = time.time()
@@ -132,27 +137,55 @@ if choice == "Nährwerte Produkte":
 
         with colLeft :
 
-            for c in range(len(cal)) :
+            countCal = 0
+            countCarb = 0
+            countfat = 0
+            countfib = 0
+
+            for i in cal :
                 countCal += 1
+            for i in carbo :
+                countCarb += 1
+            for i in fat :
+                countfat += 1
+            for i in fiber :
+                countfib += 1
+
 
             st.write("**Produkte mit Kalorien**" , str(countCal))
-            st.write("**Produkte mit Kohlenhydraten**",str(countCarbo))
-            st.write("**Produkte mit Fetten**" , str(countFat))
-            st.write("**Produkten mit Ballaststoffen**" , str(countFiber))
+            st.write("**Produkte mit Kohlenhydraten**",str(countCarb))
+            st.write("**Produkte mit Fetten**" , str(countfat))
+            st.write("**Produkten mit Ballaststoffen**" , str(countfib))
         
         with colRight :
 
+            countprot = 0
+            for item in prot:
+                countprot += 1
             
-            st.write("**Produkte mit Proteinen**" , str(countProt))
-            st.write("**Produkte mit gesättigten Fettsäuren**" , str(countSatFat))
-            st.write("**Produkte mit Natrium**" , str(countSod))
-            st.write("**Produkte mit Zuckeranteil**" , str(countSug))
+            countsf = 0
+            for item in satf:
+                countsf += 1
+            
+            countsod = 0
+            for item in sod:
+                countsod += 1
+            
+            countsug = 0
+            for item in sug:
+                countsug += 1
+            
+            st.write("**Produkte mit Proteinen**" , str(countprot))
+            st.write("**Produkte mit gesättigten Fettsäuren**" , str(countsf))
+            st.write("**Produkte mit Natrium**" , str(countsod))
+            st.write("**Produkte mit Zuckeranteil**" , str(countsug))
+            
 
     with tabChart:
 
         chart_data = pd.DataFrame({
-            'Nährwerte': ["Kalorien","Carbonhydrate", "Fette" , "Fiber", "Proteine", "Ges.Fettsäuren", "Natrium","Zucker"],
-            'Anzahl Produkte':[countCal,countCarbo,countFat,countFiber,countProt,countSatFat,countSod,countSug]})
+            'Nährwerte': ["Kalorien","Carbonhydrate", "Fette" , "Fiber", "Proteine", "Ges.Fettsäuren", "Natrium"],
+            'Anzahl Produkte':[countCal,countCarb,countfat,countfib,countprot,countsf,countsod]})
         c = ( 
            alt.Chart(chart_data).mark_bar().encode(x='Nährwerte',y='Anzahl Produkte')
         )
@@ -191,4 +224,18 @@ if choice == "Nährwert ein Produkt" :
             except:
                 pass
     
-   
+    e = st.toggle("Edeka Produkte")
+    v = st.toggle("Vekoop Produkte")
+
+    if e :
+        st.write("**Edeka Produkte**")
+        for i in range(len(edeka_arr)) : 
+            st.write("- ", edeka_arr[i] )
+    if v :
+        st.write("**Vekoop Produkte**")
+        for i in range(len(vekoop_arr)) :
+            st.write("- ", vekoop_arr[i])
+            
+
+
+    searchItem = False

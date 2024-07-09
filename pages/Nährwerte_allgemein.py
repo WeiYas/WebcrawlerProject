@@ -6,10 +6,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import altair as alt
 
-choice = st.sidebar.radio(
-    "Auswahl zum Anzeigen",
-    ["Nährwerte Produkte", "Nährwert ein Produkt"])
-
 @st.cache_resource
 def init_connection():
     connection_string = st.secrets["mongo"]["connection_string"]
@@ -46,70 +42,74 @@ with st.spinner('Daten werden geladen') :
 
     cal, carbo, fat, fiber, prot, satf, sod, sug = [], [], [], [], [], [], [], []
 
-    for i in allItems : 
-        count += 1
-
-    print(count)
-
+    
     startAllNutri = time.time()
     for item in allItems : 
         try : 
             if item["product_data/nutrition_table/calories/calories_kcal/value"] :
                 cal.append(item["product_data/nutrition_table/calories/calories_kcal/value"])
-                
-                
+ 
         except :
             pass
         try : 
             if item["product_data/nutrition_table/carbohydrate_content/value"]:
                 carbo.append(item["product_data/nutrition_table/carbohydrate_content/value"])
-                countCarbo += 1
-                
+         
         except :
             pass
         try : 
             if item["product_data/nutrition_table/fat_content/value"]:
                 fat.append(item["product_data/nutrition_table/fat_content/value"])
-                countFat += 1
-                
+            
         except :
             pass
         try : 
             if item["product_data/nutrition_table/fiber_content/value"] : 
                 fiber.append(item["product_data/nutrition_table/fiber_content/value"])
-                countFiber += 1
-                
+    
         except :
             pass
         try : 
             if item["product_data/nutrition_table/protein_content/value"] :
                 prot.append(item["product_data/nutrition_table/protein_content/value"])
-                countProt += 1
-                
+
         except :
             pass
         try : 
             if item["product_data/nutrition_table/saturated_fat_content/value"]:
                 satf.append(item["product_data/nutrition_table/saturated_fat_content/value"])
-                countSatFat += 1
+
         except :
             pass
         try : 
             if item["product_data/nutrition_table/sodium_content/value"]:
                 sod.append(item["product_data/nutrition_table/sodium_content/value"])
-                countSod += 1
         except :
             pass
         try : 
             if item["product_data/nutrition_table/sugar_content/value"]:
                 sug.append(item["product_data/nutrition_table/sugar_content/value"])
-                countSug += 1
         except :
             pass
     
     endAllNutri = time.time()
     lengthAllNutri = endAllNutri - startAllNutri
     st.write("Alle Nährwerte Schleife Ladezeit: ", lengthAllNutri)
+
+
+countCal = len(cal)
+countCarbo = len(carbo)
+countFat = len(fat)
+countFiber = len(fiber)
+countSatFat = len(satf)
+countProt = len(prot)
+countSod = len(sod)
+countSug = len(sug)
+count = len(allItems)
+countJa = countCal
+countNe = count-countJa
+
+print(countJa)
 
 
 
@@ -120,75 +120,19 @@ length = end - start
 st.write("Gesamte Ladezeit: ", length)
 
 
-if choice == "Nährwerte Produkte":
-    
-    st.title("Durchschnittliche Nährwerte aller Produkte")
+#countJa = countCal+ countCarbo+ countFat+ countFiber+countSatFat+countProt+ countSod+ countSug
 
-    tabData, tabChart = st.tabs(["Data", "Diagram"])
-
-    with tabData:
-
-        colLeft, colRight = st.columns(2)
-
-        with colLeft :
-
-            for c in range(len(cal)) :
-                countCal += 1
-
-            st.write("**Produkte mit Kalorien**" , str(countCal))
-            st.write("**Produkte mit Kohlenhydraten**",str(countCarbo))
-            st.write("**Produkte mit Fetten**" , str(countFat))
-            st.write("**Produkten mit Ballaststoffen**" , str(countFiber))
-        
-        with colRight :
-
-            
-            st.write("**Produkte mit Proteinen**" , str(countProt))
-            st.write("**Produkte mit gesättigten Fettsäuren**" , str(countSatFat))
-            st.write("**Produkte mit Natrium**" , str(countSod))
-            st.write("**Produkte mit Zuckeranteil**" , str(countSug))
-
-    with tabChart:
-
-        chart_data = pd.DataFrame({
-            'Nährwerte': ["Kalorien","Carbonhydrate", "Fette" , "Fiber", "Proteine", "Ges.Fettsäuren", "Natrium","Zucker"],
-            'Anzahl Produkte':[countCal,countCarbo,countFat,countFiber,countProt,countSatFat,countSod,countSug]})
-        c = ( 
-           alt.Chart(chart_data).mark_bar().encode(x='Nährwerte',y='Anzahl Produkte')
-        )
-        st.altair_chart(c, use_container_width=True)
+#Attribute Anzeigen rechnen
 
 
-if choice == "Nährwert ein Produkt" :
-    st.title("Nährwerte eines ausgewählten Produktes")
+#Anzeige Browser
 
-    #Anzeigen Nährstoffe eines Produktes
-
-    title = st.text_input("Produktname eintippen", "Holle frucht pur Pouchy Birne & Aprikose - Bio - 90g - vekoop.de")
-    
-    container = st.container(border = True)
-
-    with container:
-        st.write(f"Das ausgewählte Produkt ist:&nbsp; **{title}**")
-        edeka_arr , vekoop_arr = [] , []
-
-        for i in allItems : 
-            full_name = i["product_data/name"]
-            search_name = full_name.find(title)
-            shop_url = i["shop_url"]
-
-            try: 
-                if search_name != -1 and shop_url == "https://www.edeka24.de/":
-                    edeka_arr.append(i["product_data/name"])
-                    #print(edeka_arr)
-            except : 
-                pass
-
-            try:
-                if search_name != -1 and shop_url == "https://www.vekoop.de/":
-                    vekoop_arr.append(i["product_data/name"])
-                    #print(vekoop_arr)
-            except:
-                pass
-    
-   
+st.title("Produkte mit Nährwerttabelle")
+chart_data = pd.DataFrame({
+'Nährwert Tabelle vorhanden': ["ja","nein"],
+'Anzahl Produkte':[countJa,countNe]
+})
+c = ( 
+    alt.Chart(chart_data).mark_bar().encode(x='Nährwert Tabelle vorhanden',y='Anzahl Produkte')
+    )
+st.altair_chart(c, use_container_width=True)

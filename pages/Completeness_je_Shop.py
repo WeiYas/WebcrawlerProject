@@ -4,36 +4,17 @@ import pandas as pd
 import time
 import matplotlib.pyplot as plt
 import numpy as np
+import altair as alt
 
-
-st.set_page_config(
-    layout="wide",
-    page_title="Startseite",
-    page_icon="random"
-)
-st.markdown('<style>h1{font-size:25px;} h3{font-size:20px;}', unsafe_allow_html=True)
-
-# footer test .footer {position: fixed;left: 0;bottom: 0;width: 100%;background-color: red;color: white;text-align: center;}</style> <div class="footer"> <p>Footer</p> </div>'
-
-# https://www.volgshop.ch/ , https://shop.rewe.de/ , "https://www.lidl.de/" , "https://www.supermarkt24h.de/" , "https://www.heinemann-shop.com/", "https://www.mega-einkaufsparadies.de/"
+st.title("Completeness-Bereich je Shop")
+st.write(" ")
+st.markdown('<style>h1{font-size:25px;} h3{font-size:20px;}</style>', unsafe_allow_html=True)
 
 @st.cache_resource
 def init_connection():
-    connection_string = st.secrets["mongo"]["connection_string"]
-    return pymongo.MongoClient(connection_string)
+    return pymongo.MongoClient("mongodb://localhost:27017/")
 
 client = init_connection()
-
-col1, col2 = st.columns(2)
-
-with col1:
-    st.title("Webcrawler Dashboard")
-with col2:
-    st.image('logo_ucb.png',width = 500)
-
-
-
-st.markdown('<style> .footer{position: fixed;left: 0;bottom: 0;width: 100%;color: black;text-align: center;}</style> <div class="footer"><p>Umwelt-Campus Birkenfeld</p></div>',unsafe_allow_html=True)
 
 #SHOPS
 @st.cache_data(ttl=600,show_spinner = False)
@@ -83,13 +64,17 @@ for item in range(len(url_list)) :
     average = count_dict_complete[url_list[item]]/count_dict_url[complete_list[item]]
     completenessAnzahl.append(average)
 
+completeShop = []
+
+
+
 
 #print(completenessAnzahl)
 
 count = 0
 choice = " keinem "
 
-st.subheader("Anzahl der Shops und Produkte")
+st.subheader("Durschnittliche Completeness")
 
 #Completeness DURCHSCHNITT
 
@@ -100,18 +85,12 @@ for i in range(len(produkteAnzahl)) :
 
 dt = pd.DataFrame({
     "shopname" : shopsName ,
-    "produkteAnzahl" :  produkteAnzahl,
     "completeness" : completenessAnzahl
 })
 
-st.write("- Anzahl Shops:" , str(len(shopsName)))
-st.write("- Anzahl aller Produkte: ", str(count))
 st.dataframe(dt,
             column_config={
                 "shopname":"Shop",
-                "produkteAnzahl" : "Anzahl Produkte",
                 "completeness" : "Completeness"
             }, 
             hide_index = True,)
-
-    
