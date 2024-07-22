@@ -19,7 +19,6 @@ st.title("Nährwerte Übersicht")
 # Calculate the start time
 start = time.time()
 
-# Code here
 
 with st.spinner('Daten werden geladen') :
     @st.cache_data(ttl=600,show_spinner = False)
@@ -109,20 +108,12 @@ count = len(allItems)
 countJa = countCal
 countNe = count-countJa
 
-print(countJa)
-
-
 
 # Calculate the end time and time taken
 end = time.time()
 length = end - start
 
 st.write("Gesamte Ladezeit: ", length)
-
-
-#countJa = countCal+ countCarbo+ countFat+ countFiber+countSatFat+countProt+ countSod+ countSug
-
-#Attribute Anzeigen rechnen
 
 
 #Anzeige Browser

@@ -84,7 +84,7 @@ for item in range(len(url_list)) :
     completenessAnzahl.append(average)
 
 
-#print(completenessAnzahl)
+print(produkteAnzahl)
 
 count = 0
 choice = " keinem "
@@ -98,14 +98,28 @@ for i in range(len(produkteAnzahl)) :
 
 # --- TABELLE ---
 
+df = pd.DataFrame([
+    [str(len(shopsName)), count]], 
+    columns = ["Anzahl Shops" , "Anzahl Produkte"]
+)
+#df = pd.DataFrame(np.random.randn(10, 5), columns=["cols"])
+
 dt = pd.DataFrame({
     "shopname" : shopsName ,
     "produkteAnzahl" :  produkteAnzahl,
     "completeness" : completenessAnzahl
 })
 
-st.write("- Anzahl Shops:" , str(len(shopsName)))
-st.write("- Anzahl aller Produkte: ", str(count))
+#st.write("- Anzahl Shops:" , str(len(shopsName)))
+#st.write("- Anzahl aller Produkte: ", str(count))
+
+st.dataframe(df,
+            column_config={
+                "anzahlShops":"Shop",
+                "produkteAnzahl" : "Anzahl aller Produkte",
+            }, 
+            hide_index = True,)
+
 st.dataframe(dt,
             column_config={
                 "shopname":"Shop",

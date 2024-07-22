@@ -67,11 +67,4 @@ c = (
     )
 st.altair_chart(c, use_container_width=True)
 
-onChart = st.toggle("Pie chart")
-if onChart :
-        labels = 'Edeka' , 'Vekoop' , 'Globus'
-        sizes = [20,30,50]
-        fig1, ax1 = plt.subplots()
-        ax1.pie(sizes, labels=labels, autopct='%1.1f%%',shadow=False, startangle=90)
-        ax1.axis('equal')
-        st.pyplot(fig1)
+

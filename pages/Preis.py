@@ -30,18 +30,32 @@ countE = 0
 countV = 0
 arr = []
 
+count_dict_url = {}
+count_dict_complete = {}
+
+for key in items :
+    if key["shop_url"] not in count_dict_url :
+        count_dict_url[key["shop_url"]] = 1
+    else:
+        count_dict_url[key["shop_url"]] += 1
+
+url_list = list(count_dict_url)
+shopsName = []
+produkteAnzahl = []
+countShops = 0
+
+for item in range(len(url_list)) : 
+    shopsName.append(url_list[item])
+    produkteAnzahl.append(count_dict_url[url_list[item]])
+    countShops +=1
 
 with container: 
-    shop = st.radio(
-        "Wähle 1 Shop aus",
-        ["Edeka", "Vekoop"],
-        index=None,
-        horizontal=True)
+    option = st.selectbox(
+    "Wählen sie einen Shop aus: ", shopsName, placeholder="Shopauswahl...",index=None)
 
-    rangeS = st.slider('Wähle eine Preisrange aus', value = [0,500])
+    rangeS = st.slider('Wähle einen Preisbereich:', value = [0,500])
     
     st.write("- **Ausgewählter Bereich:**", str(rangeS[0])," bis " , str(rangeS[1])," EUR")
-    st.write("- **Anzahl Produkte in diesem Bereich:**", str(rangeS[0]) , " to ", str(rangeS[1]), "EUR is: ", str(count))
 
 for i in range(len(items)) : 
     try:
@@ -52,39 +66,28 @@ for i in range(len(items)) :
     except:
         pass
 
-if shop == "Edeka" :
-    countT = 0
-    st.subheader(shop)
-    for item in items :
-        try:
-            if item["shop_url"] == "https://www.edeka24.de/":
-                priceE = item["product_data/price"]
-                countT += 1
-                if int(float(priceE)) <= rangeS[1] and int(float(priceE)) >= rangeS[0] :
-                    countE += 1
-        except:
-            pass
-    
-    st.write("Anzahl Produkte in Preiskategorie:", countE)
-    chart_data = pd.DataFrame({'name': ["Ausgewählte","Totale Anzahl"], 'number of products':[countE,countT]})
-    chart_data = chart_data.set_index('name')
-    st.bar_chart(chart_data)
+priceShop = 0
+countTotal = 0
+countShop = 0
+if option != None :
+    for i in range(len(items)): 
+        for item in items :
+            try: 
+                if option == shopsName[i] and option == item["shop_url"]:
+                    countTotal += 1
+                    print(shopsName[i])
+                    priceShop = item["product_data/price"]
+                    print(countTotal)
+                    if int(float(priceShop)) <= rangeS[1] and int(float(priceShop)) >= rangeS[0] :
+                        countShop += 1
+            except: 
+                pass
 
+        if produkteAnzahl[i] == countTotal :
+            break
+        
 
-if shop == "Vekoop" :
-    countT = 0
-    st.subheader("Vekoop:")
-    for item in items :
-        try:
-            if item["shop_url"] == "https://www.vekoop.de/":
-                priceV = item["product_data/price"]
-                countT += 1
-                if int(float(priceV)) <= rangeS[1] and int(float(priceV)) >= rangeS[0] :
-                    countV += 1
-        except:
-            pass
-    
-    st.write("Anzahl Produkte in Preiskategorie:", countV)
-    chart_data = pd.DataFrame({'name': ["Ausgewählte","Totale Anzahl"], 'number of products':[countV,countT]})
-    chart_data = chart_data.set_index('name')
-    st.bar_chart(chart_data)
+st.write("Anzahl Produkte in Preisbereich:", countShop)
+chart_data = pd.DataFrame({'name': ["Ausgewählte","Totale Anzahl"], 'number of products':[countShop,countTotal]})
+chart_data = chart_data.set_index('name')
+st.bar_chart(chart_data)

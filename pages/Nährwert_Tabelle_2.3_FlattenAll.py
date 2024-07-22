@@ -128,33 +128,40 @@ if choice == "Nährwerte Produkte":
 
     with tabData:
 
-        colLeft, colRight = st.columns(2)
+        colLeft, colLeftM, colRightM, colRight = st.columns(4)
 
         with colLeft :
 
             for c in range(len(cal)) :
                 countCal += 1
 
-            st.write("**Produkte mit Kalorien**" , str(countCal))
-            st.write("**Produkte mit Kohlenhydraten**",str(countCarbo))
-            st.write("**Produkte mit Fetten**" , str(countFat))
-            st.write("**Produkten mit Ballaststoffen**" , str(countFiber))
-        
-        with colRight :
+            st.write("**Kalorien**")
+            st.write("**Kohlenhydrate**")
+            st.write("**Fette**")
+            st.write("**Ballaststoffe**")
+        with colLeftM : 
+            st.write(str(countCal))
+            st.write(str(countCarbo))
+            st.write(str(countFat))
+            st.write(str(countFiber))
 
-            
-            st.write("**Produkte mit Proteinen**" , str(countProt))
-            st.write("**Produkte mit gesättigten Fettsäuren**" , str(countSatFat))
-            st.write("**Produkte mit Natrium**" , str(countSod))
-            st.write("**Produkte mit Zuckeranteil**" , str(countSug))
-
+        with colRightM :
+            st.write("**Proteinen**")
+            st.write("**Gesättigten Fettsäuren**")
+            st.write("**Natrium**")
+            st.write("**Zuckern**")
+        with colRight:
+            st.write(str(countProt))
+            st.write(str(countSatFat))
+            st.write(str(countSod))
+            st.write(str(countSug))
     with tabChart:
 
         chart_data = pd.DataFrame({
-            'Nährwerte': ["Kalorien","Carbonhydrate", "Fette" , "Fiber", "Proteine", "Ges.Fettsäuren", "Natrium","Zucker"],
-            'Anzahl Produkte':[countCal,countCarbo,countFat,countFiber,countProt,countSatFat,countSod,countSug]})
+            'Nährwerte': ["Kalorien","Kohlenhydrate", "Fette" , "Ballaststoffe", "Proteine", "Ges.Fettsäuren", "Natrium","Zucker"],
+            'Anzahl Nährwertangabe':[countCal,countCarbo,countFat,countFiber,countProt,countSatFat,countSod,countSug]})
         c = ( 
-           alt.Chart(chart_data).mark_bar().encode(x='Nährwerte',y='Anzahl Produkte')
+           alt.Chart(chart_data).mark_bar().encode(x='Nährwerte',y='Anzahl Nährwertangabe')
         )
         st.altair_chart(c, use_container_width=True)
 
@@ -177,18 +184,17 @@ if choice == "Nährwert ein Produkt" :
             search_name = full_name.find(title)
             shop_url = i["shop_url"]
 
+            #dies anstatt Preis mit Nährwerten !! 
+
             try: 
-                if search_name != -1 and shop_url == "https://www.edeka24.de/":
-                    edeka_arr.append(i["product_data/name"])
-                    #print(edeka_arr)
+                if search_name != -1 and i["product_data/price"]:
+                    st.write("**Name:** " ,full_name)
+                    st.write("Preis: ",i["product_data/price"] )
+                elif  search_name != -1 and not i["product_data/price"]: 
+                    st.write("**Name:** " ,full_name)
+                    st.write("Kein Preis vorhanden")
             except : 
                 pass
 
-            try:
-                if search_name != -1 and shop_url == "https://www.vekoop.de/":
-                    vekoop_arr.append(i["product_data/name"])
-                    #print(vekoop_arr)
-            except:
-                pass
     
    
