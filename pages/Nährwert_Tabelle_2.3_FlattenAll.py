@@ -135,26 +135,26 @@ if choice == "Nährwerte Produkte":
             for c in range(len(cal)) :
                 countCal += 1
 
-            st.write("**Kalorien**")
-            st.write("**Kohlenhydrate**")
-            st.write("**Fette**")
-            st.write("**Ballaststoffe**")
+            st.write("**Kalorien:**")
+            st.write("**Kohlenhydrate:**")
+            st.write("**Fette:**")
+            st.write("**Ballaststoffe:**")
         with colLeftM : 
-            st.write(str(countCal))
-            st.write(str(countCarbo))
-            st.write(str(countFat))
-            st.write(str(countFiber))
+            st.write(str(countCal)," kcal")
+            st.write(str(countCarbo)," g")
+            st.write(str(countFat)," g")
+            st.write(str(countFiber)," g")
 
         with colRightM :
-            st.write("**Proteinen**")
-            st.write("**Gesättigten Fettsäuren**")
-            st.write("**Natrium**")
-            st.write("**Zuckern**")
+            st.write("**Proteinen:**")
+            st.write("**Gesättigten Fettsäuren:**")
+            st.write("**Natrium:**")
+            st.write("**Zuckern:**")
         with colRight:
-            st.write(str(countProt))
-            st.write(str(countSatFat))
-            st.write(str(countSod))
-            st.write(str(countSug))
+            st.write(str(countProt)," g")
+            st.write(str(countSatFat)," g")
+            st.write(str(countSod)," g")
+            st.write(str(countSug)," g")
     with tabChart:
 
         chart_data = pd.DataFrame({
@@ -171,30 +171,112 @@ if choice == "Nährwert ein Produkt" :
 
     #Anzeigen Nährstoffe eines Produktes
 
-    title = st.text_input("Produktname eintippen", "Holle frucht pur Pouchy Birne & Aprikose - Bio - 90g - vekoop.de")
+    title = st.text_input("Produktname eintippen", "Sweet Family Rohrzucker-Sticks 250g")
     
     container = st.container(border = True)
 
+    prodName, prodCal, prodCarb, prodFat, prodFib, prodProt, prodSatFat, prodSod, prodSug = [], [],[],[],[],[],[],[],[]
+
     with container:
         st.write(f"Das ausgewählte Produkt ist:&nbsp; **{title}**")
-        edeka_arr , vekoop_arr = [] , []
+        st.write("-1 : Der angegebene Nährwert existiert nicht")
 
-        for i in allItems : 
-            full_name = i["product_data/name"]
-            search_name = full_name.find(title)
-            shop_url = i["shop_url"]
+    for i in allItems : 
+        full_name = i["product_data/name"]
+        search_name = full_name.find(title)
+        shop_url = i["shop_url"]
+        try: 
+            if search_name != -1 :
+                prodName.append(i["product_data/name"])
+                try:
+                    if i["product_data/nutrition_table/calories/calories_kcal/value"] or i["product_data/nutrition_table/calories/calories_kcal/value"] == 0:
+                        prodCal.append(i["product_data/nutrition_table/calories/calories_kcal/value"])
+                except:
+                    prodCal.append(None)
+                    pass
+                try:
+                    if i["product_data/nutrition_table/carbohydrate_content/value"] or i["product_data/nutrition_table/carbohydrate_content/value"] == 0:
+                        prodCarb.append(i["product_data/nutrition_table/carbohydrate_content/value"])
+                except:
+                    prodCarb.append(None)
+                    pass
+                try:
+                    if i["product_data/nutrition_table/fat_content/value"] or i["product_data/nutrition_table/fat_content/value"] == 0:
+                        prodFat.append(i["product_data/nutrition_table/fat_content/value"])
+                except:
+                    prodFat.append(None)
+                    pass
+                try:
+                    if i["product_data/nutrition_table/fiber_content/value"] or i["product_data/nutrition_table/fiber_content/value"] == 0:
+                        prodFib.append(i["product_data/nutrition_table/fiber_content/value"])
+                except:
+                    prodFib.append(None)
+                    pass
+                try:
+                    if i["product_data/nutrition_table/protein_content/value"] or i["product_data/nutrition_table/protein_content/value"] == 0:
+                        prodProt.append(i["product_data/nutrition_table/protein_content/value"])
+                except:
+                    prodProt.append(None)
+                    pass
+                try:
+                    if i["product_data/nutrition_table/saturated_fat_content/value"] or i["product_data/nutrition_table/saturated_fat_content/value"] == 0:
+                        prodSatFat.append(i["product_data/nutrition_table/saturated_fat_content/value"])
+                except:
+                    prodSatFat.append(None)
+                    pass
+                try:
+                    if i["product_data/nutrition_table/sodium_content/value"] or i["product_data/nutrition_table/sodium_content/value"] == 0 :
+                        prodSod.append(i["product_data/nutrition_table/sodium_content/value"])
+                except:
+                    prodSod.append(None)
+                    pass
+                try:
+                    if i["product_data/nutrition_table/sugar_content/value"] or i["product_data/nutrition_table/sugar_content/value"] == 0:
+                        prodSug.append(i["product_data/nutrition_table/sugar_content/value"])
+                except:
+                    prodSug.append(None)
+                    pass
 
-            #dies anstatt Preis mit Nährwerten !! 
+        except : 
+            pass
+    
+    print("Name: ",len(prodName))
+    print("Cal: ",len(prodCal))
+    print("Carb: ",len(prodCarb))
+    print("Fat: ",len(prodFib))
+    print("Fib: ",len(prodFib))
+    print("Prot: ",len(prodProt))
+    print("SatFat: ",len(prodSatFat))
+    print("Sodium: ",len(prodSod))
+    print("Sug: ",len(prodSug))
 
-            try: 
-                if search_name != -1 and i["product_data/price"]:
-                    st.write("**Name:** " ,full_name)
-                    st.write("Preis: ",i["product_data/price"] )
-                elif  search_name != -1 and not i["product_data/price"]: 
-                    st.write("**Name:** " ,full_name)
-                    st.write("Kein Preis vorhanden")
-            except : 
-                pass
+
+    dt = pd.DataFrame({
+        "Name" : prodName,
+        "Kalorien" :  prodCal,
+        "Kohlenhydrate" : prodCarb,
+        "Fat" : prodFat,
+        "Fiber" : prodFib,
+        "Proteine" : prodProt,
+        "Sat_Fat" : prodSatFat,
+        "Sodium" : prodSod,
+        "Sugar" : prodSug
+
+        })
+
+    st.dataframe(dt,
+            column_config={
+                "Name" : "Produktname",
+                "Kalorien" : "Kalorien in kcal",
+                "Kohlenhydrate" : "Kohlenhydrate in g",
+                "Fat" : "Fette in g",
+                "Fiber" : "Ballaststoffe in g",
+                "Proteine" : "Proteine in g",
+                "Sat_Fat" : "Gesättigte Fettsäuren in g",
+                "Sodium" : "Natrium in g",
+                "Sugar" : "Zucker in g"
+            }, 
+            hide_index = True,)
 
     
    
