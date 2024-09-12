@@ -26,7 +26,7 @@ st.markdown('<style>h1{font-size:25px;} h3{font-size:20px;}</style>', unsafe_all
 @st.cache_data(ttl=600,show_spinner = False)
 def get_data():
     db = client.mydb
-    items = db.all_flatten.find({},{"shop_url":1, "product_data/gtin":1})
+    items = db.all_flatten.find({},{"shop_url":1, "product_data/gtin":1 , "product_data/name":1})
     items = list(items)
     return items
 
@@ -97,24 +97,20 @@ if len(options) == 2 :
 
         for i in range(len(options)):
             for item in items :
-                if item["shop_url"] == numShop1 and options[i] == numShop1 :
+                if item["shop_url"] ==options[i] and options[i] == numShop1 :
                     arr1.append(item["product_data/gtin"])
 
                 elif item["shop_url"] == numShop2 and options[i] == numShop2 :
                     arr2.append(item["product_data/gtin"])
 
+        print("FirstARR:" ,len(arr1))
+        print("SecondARR:", len(arr2))
         
+        a = np.array(arr1)
+        b = np.array(arr2)
+        arrSame1 = np.intersect1d(a,b)
 
-        for i in range(len(shopsName)) :
-            if options[0] == numShop1 and options[1] == numShop2 or  options[1] == numShop1 and options[0] == numShop2:
-                for a in range(len(arr1)):
-                    for b in range(len(arr2)) :
-                        if arr1[a] == arr2[b] :
-                            arrSame1.append(arr1[a])
-                            arrSame2.append(arr2[b])
-
-        print("FirstARR:" ,arr1)
-        print("SecondARR:", arr2)
+        print(len(arrSame1))
 
         lenG = len(arrSame1)
        
@@ -123,6 +119,24 @@ if len(options) == 2 :
         #print(arrSameG)
         
         st.write("Anzahl gleicher Produkte: " ,str(lenG))
+
+        nameProd1 = []
+        nameProd2 = []
+        nameShop1 = []
+        nameShop2 = []
+
+        
+
+        dt = pd.DataFrame({
+        "GTIN" : arrSame1,
+
+        })
+
+        st.dataframe(dt,
+                column_config={
+                    "GTIN" : "GTIN"
+                }, 
+                hide_index = True,)
 
 
 

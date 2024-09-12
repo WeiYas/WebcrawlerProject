@@ -107,7 +107,7 @@ q3 = n * 0.75
 
 q1,q2,q3 = np.percentile(list_complete, [25,50,75])
 
-q = [q1,q2,q3]
+q = [round(q1,2),round(q2,2),round(q3,2)]
 quartile = ["Q1","Q2","Q3"]
 
 st.subheader("Quartile und Median")

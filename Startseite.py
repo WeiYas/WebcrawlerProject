@@ -81,10 +81,10 @@ for item in range(len(url_list)) :
     shopsName.append(url_list[item])
     produkteAnzahl.append(count_dict_url[url_list[item]])
     average = count_dict_complete[url_list[item]]/count_dict_url[complete_list[item]]
-    completenessAnzahl.append(average)
+    completenessAnzahl.append(round(average,2))
 
 
-print(produkteAnzahl)
+#print(produkteAnzahl)
 
 count = 0
 choice = " keinem "

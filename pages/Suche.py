@@ -12,6 +12,9 @@ def init_connection():
 
 client = init_connection()
 
+st.markdown('<style>h1{font-size:25px;} h3{font-size:20px;}</style>', unsafe_allow_html=True)
+st.title("Suche nach Produkt")
+
 with st.spinner('Daten werden geladen') :
 
     @st.cache_data(ttl=600, show_spinner=False)
@@ -64,43 +67,90 @@ with st.spinner('Daten werden geladen') :
     container = st.container(border = True)
 
     with container:
-        title = st.text_input(
-            "Suche nach einem Produkt",
-            "Sun Rice Schokopuffreis Original 250g",
-            key="placeholder",
-        )
-        st.write(f"Das ausgewählte Produkt ist:&nbsp; **{title}**")
+        choice = st.radio(
+        "Suche mit Teilnamen des Produktes oder GTIN?",
+        ["Teilname des Produktes", "GTIN"])
 
-    sName ,pName, gtinNumb, prodNumb = [],[], [], []
+        if choice == "Teilname des Produktes" :
+            title = st.text_input(
+                "Suche nach einem Produkt mit Teilnamen",
+                "Suche",
+                key="placeholderT",
+            )
+            st.write(f"Das ausgewählte Produkt ist:&nbsp; **{title}**")
+
+        if choice == "GTIN" :
+            gtinSearch = st.text_input(
+                "Suche nach einem Produkt mit GTIN",
+                "Suche mit GTIN",
+                key="placeholderG",
+            )
+            st.write(f"Die GTIN des ausgewählten Produktes ist:&nbsp; **{gtinSearch}**")
+
+    sName ,pName, gtinNumb, prodNumb, price = [],[], [], [] , []
 
     for i in items : 
-        full_name = i["product_data/name"]
-        search_name = full_name.find(title)
-        shop_url = i["shop_url"]
-
         #dies anstatt Preis mit Nährwerten !! 
-
+        try:
+            if title :
+                full_name = i["product_data/name"]
+                search_name = full_name.find(title)
+                shop_url = i["shop_url"]
+        except :
+            pass
         try: 
-            if search_name != -1 and i["_id"]:
+            if title and search_name != -1 and title != "Suche":
                 sName.append(i["shop_url"])
                 pName.append(i["product_data/name"])
-                if i["product_data/gtin"] :
-                    gtinNumb.append(i["product_data/gtin"])
-                else :
+                try : 
+                    if i["product_data/gtin"] :
+                        gtinNumb.append(i["product_data/gtin"])
+                except:    
                     gtinNumb.append(None)
-                if i["product_data/product_number"] :
-                    prodNumb.append(i["product_data/product_number"])
-                else :
+                    pass
+                try : 
+                    if i["product_data/product_number"] :
+                        prodNumb.append(i["product_data/product_number"])
+                except:
                     prodNumb.append(None)
-                
+                    pass
+                try : 
+                    if i["product_data/price"] :
+                        price.append(i["product_data/price"])
+                except :
+                    price.append(None)
+                    pass
                 #st.write("Preis: ",i["product_data/price"] )
-            elif  search_name != -1 and not i["product_data/price"]: 
-                st.write("Auswahl konnt nicht gefunden werden")
+        except: 
+            pass
+        try:
+            if  gtinSearch == i["product_data/gtin"]: 
+                sName.append(i["shop_url"])
+                pName.append(i["product_data/name"])
+                try : 
+                    if i["product_data/gtin"] :
+                        gtinNumb.append(i["product_data/gtin"])
+                except:    
+                    gtinNumb.append(None)
+                    pass
+                try : 
+                    if i["product_data/product_number"] :
+                        prodNumb.append(i["product_data/product_number"])
+                except:
+                    prodNumb.append(None)
+                    pass
+                try : 
+                    if i["product_data/price"] :
+                        price.append(i["product_data/price"])
+                except :
+                    price.append(None)
+                    pass
         except : 
             pass
 
     dt = pd.DataFrame({
     "produktName" :  pName,
+    "preis" : price,
     "shopname" : sName,
     "gtin" : gtinNumb,
     "product Number" : prodNumb 
@@ -109,6 +159,7 @@ with st.spinner('Daten werden geladen') :
     st.dataframe(dt,
             column_config={
                 "produktName" : "Produktname",
+                "preis" : "Preis in €" ,
                 "shopname":"Shop",
                 "gtin" : "GTIN",
                 "product Number" : "Produktnummer"

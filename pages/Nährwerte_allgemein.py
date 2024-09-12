@@ -32,7 +32,7 @@ with st.spinner('Daten werden geladen') :
     allItems = get_data_nutri()
     endnutri = time.time()
     lengthnutri = endnutri - startnutri
-    st.write("Ladezeit aller Produkte mit Nährwert Tabelle: ", lengthnutri)
+    print("Ladezeit aller Produkte mit Nährwert Tabelle: ", lengthnutri)
 
     count = 0
     countCal, countCarbo, countFat, countFiber, countSatFat, countProt, countSod, countSug = 0,0,0,0,0,0,0,0
@@ -93,7 +93,7 @@ with st.spinner('Daten werden geladen') :
     
     endAllNutri = time.time()
     lengthAllNutri = endAllNutri - startAllNutri
-    st.write("Alle Nährwerte Schleife Ladezeit: ", lengthAllNutri)
+    print("Alle Nährwerte Schleife Ladezeit: ", lengthAllNutri)
 
 
 countCal = len(cal)
@@ -113,12 +113,12 @@ countNe = count-countJa
 end = time.time()
 length = end - start
 
-st.write("Gesamte Ladezeit: ", length)
+print("Gesamte Ladezeit: ", length)
 
 
 #Anzeige Browser
 
-st.title("Produkte mit Nährwerttabelle")
+st.subheader("Produkte mit Nährwerttabelle")
 chart_data = pd.DataFrame({
 'Nährwert Tabelle vorhanden': ["ja","nein"],
 'Anzahl Produkte':[countJa,countNe]

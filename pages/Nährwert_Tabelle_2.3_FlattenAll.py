@@ -37,7 +37,7 @@ with st.spinner('Daten werden geladen') :
     allItems = get_data_nutri()
     endnutri = time.time()
     lengthnutri = endnutri - startnutri
-    st.write("Ladezeit aller Produkte mit Nährwert Tabelle: ", lengthnutri)
+    print("Ladezeit aller Produkte mit Nährwert Tabelle: ", lengthnutri)
 
     count = 0
     countCal, countCarbo, countFat, countFiber, countSatFat, countProt, countSod, countSug = 0,0,0,0,0,0,0,0
@@ -49,15 +49,14 @@ with st.spinner('Daten werden geladen') :
     for i in allItems : 
         count += 1
 
-    print(count)
+    #print(count)
 
     startAllNutri = time.time()
     for item in allItems : 
         try : 
             if item["product_data/nutrition_table/calories/calories_kcal/value"] :
                 cal.append(item["product_data/nutrition_table/calories/calories_kcal/value"])
-                
-                
+                   
         except :
             pass
         try : 
@@ -109,7 +108,7 @@ with st.spinner('Daten werden geladen') :
     
     endAllNutri = time.time()
     lengthAllNutri = endAllNutri - startAllNutri
-    st.write("Alle Nährwerte Schleife Ladezeit: ", lengthAllNutri)
+    print("Alle Nährwerte Schleife Ladezeit: ", lengthAllNutri)
 
 
 
@@ -117,7 +116,7 @@ with st.spinner('Daten werden geladen') :
 end = time.time()
 length = end - start
 
-st.write("Gesamte Ladezeit: ", length)
+print("Gesamte Ladezeit: ", length)
 
 
 if choice == "Nährwerte Produkte":
@@ -179,7 +178,8 @@ if choice == "Nährwert ein Produkt" :
 
     with container:
         st.write(f"Das ausgewählte Produkt ist:&nbsp; **{title}**")
-        st.write("-1 : Der angegebene Nährwert existiert nicht")
+        st.write("None : Der angegebene Nährwert existiert nicht")
+
 
     for i in allItems : 
         full_name = i["product_data/name"]
@@ -236,10 +236,25 @@ if choice == "Nährwert ein Produkt" :
                 except:
                     prodSug.append(None)
                     pass
-
+                try: 
+                    if (prodSug[-1] == None) and (prodCarb[-1] == None) and (prodSod[-1] == None) and (prodSatFat[-1] == None) and (prodFat[-1] == None) and (prodFib[-1] == None) and (prodCal[-1] == None) and (prodProt[-1] == None):
+                        print("popping")
+                        prodSug.pop()
+                        prodCarb.pop()
+                        prodSod.pop()
+                        prodSatFat.pop()
+                        prodFat.pop()
+                        prodFib.pop()
+                        prodCal.pop()
+                        prodProt.pop()
+                        prodName.pop() 
+                except:
+                    pass
+                
         except : 
             pass
     
+    #"nutrition_table" : {"$exists" : False}
     print("Name: ",len(prodName))
     print("Cal: ",len(prodCal))
     print("Carb: ",len(prodCarb))
