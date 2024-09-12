@@ -164,6 +164,7 @@ with st.spinner('Daten werden geladen') :
                 "gtin" : "GTIN",
                 "product Number" : "Produktnummer"
             }, 
+            use_container_width = True,
             hide_index = True,)
     
 

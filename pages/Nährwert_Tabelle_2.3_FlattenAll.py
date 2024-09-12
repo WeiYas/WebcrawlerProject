@@ -291,6 +291,7 @@ if choice == "Nährwert ein Produkt" :
                 "Sodium" : "Natrium in g",
                 "Sugar" : "Zucker in g"
             }, 
+            use_container_width = True,
             hide_index = True,)
 
     
