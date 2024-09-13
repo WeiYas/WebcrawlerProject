@@ -128,9 +128,9 @@ if choice == "Nährwerte Produkte":
     with tabData:
 
         colLeft, colLeftM, colRightM, colRight = st.columns(4)
-
+        st.write("(Anzahl Produkte je Kategorie)")
         with colLeft :
-
+            
             for c in range(len(cal)) :
                 countCal += 1
 
@@ -139,10 +139,10 @@ if choice == "Nährwerte Produkte":
             st.write("**Fette:**")
             st.write("**Ballaststoffe:**")
         with colLeftM : 
-            st.write(str(countCal)," kcal")
-            st.write(str(countCarbo)," g")
-            st.write(str(countFat)," g")
-            st.write(str(countFiber)," g")
+            st.write(str(countCal))
+            st.write(str(countCarbo))
+            st.write(str(countFat))
+            st.write(str(countFiber))
 
         with colRightM :
             st.write("**Proteinen:**")
@@ -150,10 +150,10 @@ if choice == "Nährwerte Produkte":
             st.write("**Natrium:**")
             st.write("**Zuckern:**")
         with colRight:
-            st.write(str(countProt)," g")
-            st.write(str(countSatFat)," g")
-            st.write(str(countSod)," g")
-            st.write(str(countSug)," g")
+            st.write(str(countProt))
+            st.write(str(countSatFat))
+            st.write(str(countSod))
+            st.write(str(countSug))
     with tabChart:
 
         chart_data = pd.DataFrame({

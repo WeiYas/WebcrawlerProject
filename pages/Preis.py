@@ -77,15 +77,11 @@ with st.spinner('Daten werden geladen') :
         countShops +=1
         print(count_dict_complete[url_list[item]])
         print(count_dict_url[complete_list[item]])
-        try :
-            average = count_dict_complete[url_list[item]]/count_dict_url[complete_list[item]]
 
-        except:
-            pass
-        priceDurchschnitt.append(average)
+        average = count_dict_complete[url_list[item]]/count_dict_url[complete_list[item]]
+
+        priceDurchschnitt.append(round(average,2))
         
-
-
     if radiochoice == "Preisbereiche je Shop":
         with container: 
             option = st.selectbox(
@@ -126,7 +122,7 @@ with st.spinner('Daten werden geladen') :
                     break
 
         st.subheader(option)
-        st.write("Anzahl Produkte in Preisbereich:", countShop)
+        st.write("Anzahl Produkte in Preisbereich:", str(countShop))
         chart_data = pd.DataFrame({'name': ["Ausgewählte","Totale Anzahl"], 'number of products':[countShop,countTotal]})
         chart_data = chart_data.set_index('name')
         st.bar_chart(chart_data)
